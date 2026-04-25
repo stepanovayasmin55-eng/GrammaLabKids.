@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrammaLab Kids — Твой Wordwall</title>
+    <style>
+        :root { --bg: #ffffff; --blue: #e3f2fd; --main: #00a2ff; --dark: #0077b6; --text: #333; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
+        header { background: var(--main); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .ai-btn { background: white; color: var(--main); border: 2px solid white; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 20px; }
+
+        /* Видео */
+        .main-video { width: 100%; height: 400px; background: #000; border-radius: 20px; overflow: hidden; margin-bottom: 30px; border: 5px solid var(--blue); }
+
+        /* Сетка игр */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+        .card { background: var(--blue); border: 2px solid var(--main); border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: 0.3s; font-weight: bold; color: var(--dark); }
+        .card:hover { transform: translateY(-5px); background: var(--main); color: white; }
+        .card span { font-size: 40px; display: block; margin-bottom: 10px; }
+
+        /* Редактор вопросов */
+        #editor { display: none; background: #f9f9f9; padding: 25px; border-radius: 20px; border: 2px solid var(--main); }
+        .q-item { background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; position: relative; }
+        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn-add { background: #27ae60; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; }
+
+        /* Игровая зона */
+        #game-zone { display: none; text-align: center; }
+        .game-box { background: var(--blue); padding: 30px; border-radius: 25px; min-height: 300px; margin: 20px 0; border: 3px solid var(--main); }
+        
+        /* Кроты */
+        .mole-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .hole { background: #8d6e63; height: 100px; border-radius: 50% 50% 20% 20%; position: relative; overflow: hidden; cursor: pointer; }
+        .mole { width: 80%; height: 80%; background: #a1887f; position: absolute; bottom: -100%; left: 10%; transition: 0.3s; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; padding: 5px; text-align: center; }
+        .mole.up { bottom: 10%; }
+
+        .btn-play { background: var(--main); color: white; border: none; padding: 15px 40px; border-radius: 10px; font-size: 20px; cursor: pointer; font-weight: bold; width: 100%; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="font-size: 22px; font-weight: bold;">💎 GrammaLab Studio</div>
+    <button class="ai-btn" onclick="aiFill()">✨ УМНЫЙ ИИ</button>
+</header>
+
+<div class="container">
+    <div id="main-screen">
+        <div class="main-video">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/S_8q0sO1RMo" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="grid">
+            <div class="card" onclick="startEdit('Викторина')"><span>📝</span>Викторина</div>
+            <div class="card" onclick="startEdit('Ударь крота')"><span>🔨</span>Ударь крота</div>
+            <div class="card" onclick="startEdit('Колесо')"><span>🎡</span>Колесо</div>
+            <div class="card" onclick="startEdit('Анаграмма')"><span>🔠</span>Анаграмма</div>
+            <div class="card" onclick="startEdit('Карточки')"><span>🃏</span>Карточки</div>
+        </div>
+    </div>
+
+    <div id="editor">
+        <h2 id="ed-title">Настройка игры</h2>
+        <input type="text" id="topic" placeholder="Тема (например: Не с глаголами)" style="margin-bottom: 20px; border: 2px solid var(--main)">
+        <div id="questions-list">
+            <div class="q-item">
+                <input type="text" class="q-val" placeholder="Вопрос или слово">
+                <input type="text" class="a-correct" placeholder="Правильный ответ">
+                <input type="text" class="a-wrong" placeholder="Неправильный ответ (для Крота/Викторины)">
+            </div>
+        </div>
+        <button class="btn-add" onclick="addQ()">➕ Добавить еще вопрос</button>
+        <button class="btn-play" onclick="play()">ИГРАТЬ</button>
+    </div>
+
+    <div id="game-zone">
+        <h2 id="g-title"></h2>
+        <div class="game-box" id="g-content"></div>
+        <button class="btn-play" style="background:#ccc" onclick="location.reload()">В МЕНЮ</button>
+    </div>
+</div>
+
+<script>
+    let mode = "";
+    let qData = [];
+
+    function startEdit(m) {
+        mode = m;
+        document.getElementById('main-screen').style.display = 'none';
+        document.getElementById('editor').style.display = 'block';
+        document.getElementById('ed-title').innerText = "Создание: " + m;
+    }
+
+    function addQ() {
+        const div = document.createElement('div');
+        div.className = 'q-item';
+        div.innerHTML = `<input type="text" class="q-val" placeholder="Вопрос или слово">
+                         <input type="text" class="a-correct" placeholder="Правильный ответ">
+                         <input type="text" class="a-wrong" placeholder="Неправильный ответ">`;
+        document.getElementById('questions-list').appendChild(div);
+    }
+
+    function aiFill() {
+        const t = document.getElementById('topic').value.toLowerCase();
+        const list = document.getElementById('questions-list');
+        list.innerHTML = ""; 
+        if(t.includes("глагол")) {
+            const data = [
+                ["(не)навидеть", "ненавидеть", "не навидеть"],
+                ["(не)был", "не был", "небыл"],
+                ["(не)хотеть", "не хотеть", "нехотеть"]
+            ];
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'q-item';
+                div.innerHTML = `<input type="text" class="q-val" value="${item[0]}">
+                                 <input type="text" class="a-correct" value="${item[1]}">
+                                 <input type="text" class="a-wrong" value="${item[2]}">`;
+                list.appendChild(div);
+            });
+        }
+        alert("🤖 ИИ подготовил список вопросов!");
+    }
+
+    function play() {
+        qData = [];
+        const items = document.querySelectorAll('.q-item');
+        items.forEach(i => {
+            qData.push({
+                q: i.querySelector('.q-val').value,
+                c: i.querySelector('.a-correct').value,
+                w: i.querySelector('.a-wrong').value
+            });
+        });
+
+        document.getElementById('editor').style.display = 'none';
+        document.getElementById('game-zone').style.display = 'block';
+        document.getElementById('g-title').innerText = mode;
+        const cont = document.getElementById('g-content');
+
+        if(mode === 'Ударь крота') {
+            cont.innerHTML = `<p>Ударь только по ПРАВИЛЬНЫМ словам!</p><div class="mole-grid" id="m-grid"></div>`;
+            for(let i=0; i<6; i++) document.getElementById('m-grid').innerHTML += `<div class="hole" onclick="hit(${i})"><div class="mole" id="mole-${i}"></div></div>`;
+            setInterval(moleGame, 1000);
+        } else {
+            cont.innerHTML = `<h3>Игра запущена!</h3><p>Первый вопрос: ${qData[0].q}</p>`;
+        }
+    }
+
+    function moleGame() {
+        const idx = Math.floor(Math.random()*6);
+        const mole = document.getElementById(`mole-${idx}`);
+        const isCorrect = Math.random() > 0.5;
+        const data = qData[Math.floor(Math.random()*qData.length)];
+        mole.innerText = isCorrect ? data.c : data.w;
+        mole.dataset.type = isCorrect ? "yes" : "no";
+        mole.classList.add('up');
+        setTimeout(() => mole.classList.remove('up'), 800);
+    }
+
+    function hit(i) {
+        const mole = document.getElementById(`mole-${i}`);
+        if(!mole.classList.contains('up')) return;
+        if(mole.dataset.type === "yes") alert("🎯 В точку!");
+        else alert("💥 Ой, это ошибка!");
+        mole.classList.remove('up');
+    }
+</script>
+</body>
+</html>
