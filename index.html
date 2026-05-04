@@ -2,222 +2,269 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GrammaLab 7-in-1 Ultimate</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GrammaLab Ultimate 8 Pro</title>
     <style>
-        :root { --red: #ff5e6c; --blue: #4da3ff; --bg: #f4f7f9; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; }
-
-        /* Шапка */
-        header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--red); height: 60px; box-sizing: border-box; }
-        .logo { font-size: 24px; color: var(--red); font-weight: 900; cursor: pointer; }
-
-        /* Экраны */
-        .screen { display: none; padding: 15px; max-width: 500px; margin: 0 auto; height: calc(100vh - 60px); overflow-y: auto; }
+        :root { --main: #00a2ff; --bg: #f0f4f8; --text: #2d3436; --ai: #6c5ce7; --share: #2ecc71; --accent: #ff7675; }
+        body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-weight: 900; color: var(--main); font-size: 22px; }
+        .screen { display: none; padding: 15px; max-width: 600px; margin: 0 auto; animation: fadeIn 0.3s ease; }
         .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Плитки меню */
+        /* МЕНЮ */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; border: none; transition: 0.2s; }
+        .card { background: white; padding: 20px; border-radius: 22px; text-align: center; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
         .card:active { transform: scale(0.95); }
-        .card i { font-size: 40px; display: block; margin-bottom: 8px; font-style: normal; }
+        .card span { display: block; font-size: 35px; margin-bottom: 5px; }
 
-        /* Игровая область */
-        #viewport { 
-            background: white; width: 100%; height: 450px; border-radius: 30px; 
-            position: relative; overflow: hidden; border: 2px solid #eee; margin-top: 10px;
-        }
+        /* РЕДАКТОР */
+        .editor-item { background: white; padding: 20px; border-radius: 24px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; }
+        .btn-del { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
+        input[type="text"] { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #edf2f7; margin-bottom: 8px; outline: none; box-sizing: border-box; }
+        .ans-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
 
-        .btn-home { position: absolute; top: 10px; left: 10px; z-index: 100; padding: 8px 15px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 20px; cursor: pointer; }
+        /* КНОПКИ */
+        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: 700; cursor: pointer; width: 100%; margin: 5px 0; font-size: 16px; color: white; }
+        .btn-main { background: var(--main); box-shadow: 0 4px 0 #0081cc; }
+        .btn-ai { background: var(--ai); }
 
-        /* Стили для игр */
-        .wheel-box { width: 300px; height: 300px; margin: 40px auto; position: relative; transition: 4s cubic-bezier(0.1, 0, 0.1, 1); border-radius: 50%; border: 8px solid #333; }
-        .plane-hero { position: absolute; font-size: 45px; left: 20px; transition: 0.4s ease; z-index: 10; }
-        .cloud-item { position: absolute; background: white; padding: 12px 20px; border-radius: 30px; border: 2px solid var(--blue); cursor: pointer; animation: flyLeft 4s linear infinite; white-space: nowrap; font-weight: bold; }
-        @keyframes flyLeft { from { left: 110%; } to { left: -150%; } }
+        /* СЦЕНА */
+        #stage { background: white; border-radius: 30px; height: 420px; position: relative; border: 4px solid var(--main); overflow: hidden; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
 
-        /* Кнопки и формы */
-        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-red { background: var(--red); color: white; box-shadow: 0 4px 0 #d64552; }
-        .btn-ai { background: #8e44ad; color: white; }
+        /* АНИМАЦИИ */
+        .mole { width: 80px; height: 90px; background: #8d6e63; border-radius: 30px 30px 10px 10px; position: absolute; bottom: -100px; transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); color: white; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; padding: 5px; box-sizing: border-box; }
+        .mole.up { bottom: 40px; }
+        
+        .cloud { position: absolute; background: white; padding: 15px; border-radius: 20px; border: 2px solid var(--main); animation: fly 5s linear infinite; cursor: pointer; }
+        @keyframes fly { from { left: 110%; } to { left: -150px; } }
 
-        #game-modal { position: absolute; inset: 20px; background: white; border-radius: 25px; padding: 20px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 200; box-shadow: 0 0 40px rgba(0,0,0,0.2); text-align: center; }
+        .slot-reel { transition: 2s cubic-bezier(0.45, 0.05, 0.55, 0.95); position: absolute; width: 100%; }
+        .slot-box { width: 90px; height: 100px; border: 2px solid var(--main); overflow: hidden; position: relative; background: #f8fafc; border-radius: 10px; }
+
+        .confetti { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 999; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo" onclick="location.reload()">GrammaLab</div>
-    <div style="font-weight: bold; font-size: 20px;">🏆 <span id="score">0</span></div>
+    <div class="logo">GrammaLab Pro 8</div>
+    <div id="score-val" style="font-weight:bold; color:var(--main)">Очки: 0</div>
+    <button onclick="location.reload()" style="background:none; border:none; font-size: 24px;">🏠</button>
 </header>
 
-<div id="scr-home" class="screen active">
+<div id="sc-menu" class="screen active">
     <div class="grid">
-        <div class="card" onclick="openEd('wheel')"><i>🎡</i>Колесо</div>
-        <div class="card" onclick="openEd('plane')"><i>✈️</i>Самолет</div>
-        <div class="card" onclick="openEd('maze')"><i>👾</i>Лабиринт</div>
-        <div class="card" onclick="openEd('anagram')"><i>🔡</i>Анаграмма</div>
-        <div class="card" onclick="openEd('mole')"><i>🔨</i>Кроты</div>
-        <div class="card" onclick="openEd('pairs')"><i>👥</i>Пары</div>
-        <div class="card" onclick="openEd('quiz')"><i>📝</i>Викторина</div>
+        <div class="card" onclick="openEditor('mole')"><span>🔨</span><b>Крот</b></div>
+        <div class="card" onclick="openEditor('plane')"><span>✈️</span><b>Погоня</b></div>
+        <div class="card" onclick="openEditor('wheel')"><span>🎡</span><b>Колесо</b></div>
+        <div class="card" onclick="openEditor('cards')"><span>💡</span><b>Карточки</b></div>
+        <div class="card" onclick="openEditor('anagram')"><span>🔠</span><b>Слова</b></div>
+        <div class="card" onclick="openEditor('maze')"><span>👾</span><b>Лабиринт</b></div>
+        <div class="card" onclick="openEditor('slots')"><span>🎰</span><b>Автомат</b></div>
+        <div class="card" onclick="openEditor('pairs')"><span>👥</span><b>Пары</b></div>
     </div>
-    <button class="btn" style="background:#eee; margin-top:20px;" onclick="importLink()">📥 Загрузить игру</button>
+    <button class="btn btn-main" style="margin-top:20px; background: var(--share)" onclick="importGame()">📥 ЗАГРУЗИТЬ КОД</button>
 </div>
 
-<div id="scr-edit" class="screen">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="ed-title"></h2>
-        <button class="btn-ai" onclick="generateAI()" style="padding:8px 15px; border-radius:10px; border:none; cursor:pointer;">✨ Умный ИИ</button>
+<div id="sc-editor" class="screen">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn btn-ai" onclick="geminiAI()">✨ ИИ Gemini</button>
+        <button class="btn btn-main" style="background:var(--share)" onclick="exportGame()">📤 КОД ИГРЫ</button>
     </div>
-    <div id="q-container"></div>
-    <button class="btn" onclick="addQ()">+ Вопрос</button>
-    <button class="btn btn-red" onclick="run()">ИГРАТЬ ▶️</button>
-    <button class="btn" style="background:#27ae60; color:white;" onclick="exportLink()">📦 Поделиться игрой</button>
+    <div id="factory"></div>
+    <button class="btn btn-main" style="background:#636e72" onclick="addQ()">➕ ДОБАВИТЬ ВОПРОС</button>
+    <button class="btn btn-main" onclick="play()">ИГРАТЬ ▶️</button>
 </div>
 
-<div id="scr-game" class="screen">
-    <div id="viewport">
-        <button class="btn-home" onclick="location.reload()">🏠 Меню</button>
-        <div id="game-task" style="text-align:center; margin-top:50px; font-weight:bold; font-size:18px; padding:0 10px;"></div>
-        <div id="game-modal">
-            <h2 id="modal-title"></h2>
-            <div id="modal-buttons" style="width:100%"></div>
-        </div>
-    </div>
-    <div id="game-ui" style="margin-top:10px;"></div>
+<div id="sc-game" class="screen">
+    <div id="q-text" style="text-align:center; font-weight:bold; margin-bottom:15px; font-size:20px;"></div>
+    <div id="stage"></div>
+    <div id="options" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
 </div>
 
 <script>
-    let mode='', qs=[], score=0, rot=0;
-    let activeQs = [];
+    let mode = '', qs = [], cur = 0, score = 0;
 
-    // ПОЛУЧЕНИЕ ИЗ ССЫЛКИ
-    window.onload = () => {
-        const url = new URLSearchParams(window.location.search);
-        if(url.has('data')) {
-            try {
-                const d = JSON.parse(decodeURIComponent(escape(atob(url.get('data')))));
-                mode = d.m; qs = d.d; run();
-            } catch(e) { console.error("Ошибка загрузки"); }
-        }
-    };
+    const aiDB = [
+        {q: "Как пишется (м..локо)?", a: ["о", "а", "и"], c: 0},
+        {q: "Столица Франции?", a: ["Париж", "Лион", "Берлин"], c: 0},
+        {q: "2 + 2 * 2 = ?", a: ["6", "8", "4"], c: 0},
+        {q: "Часть речи 'Бежать'?", a: ["Глагол", "Сущ.", "Прил."], c: 0}
+    ];
 
-    function nav(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-
-    function openEd(m) { mode=m; document.getElementById('ed-title').innerText=m; document.getElementById('q-container').innerHTML=''; addQ(); nav('scr-edit'); }
-
-    function addQ(t='', a=['','',''], c=0) {
-        const d = document.createElement('div'); d.style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; border-left:6px solid var(--red);";
-        const id = Math.random().toString(36).substr(7);
-        d.innerHTML = `<input type="text" placeholder="Задание/Слово" value="${t}" class="qi" style="width:100%; margin-bottom:8px; border:1px solid #ddd; padding:8px; border-radius:8px;">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                ${[0,1,2].map(i => `<div><input type="radio" name="${id}" ${i===c?'checked':''}> <input type="text" value="${a[i]}" class="ai" style="width:70%; font-size:12px;"></div>`).join('')}
-            </div>`;
-        document.getElementById('q-container').appendChild(d);
+    function openEditor(m, isImport = false) {
+        mode = m;
+        document.getElementById('sc-menu').classList.remove('active');
+        document.getElementById('sc-editor').classList.add('active');
+        if(!isImport) { document.getElementById('factory').innerHTML = ""; addQ(); }
     }
 
-    function generateAI() {
-        const theme = prompt("Введите тему для ИИ (напр. Грамматика):");
-        if(!theme) return;
-        document.getElementById('q-container').innerHTML = '';
-        for(let i=0; i<4; i++) addQ(`${theme} - Вопрос ${i+1}`, ["Верно", "Нет", "Ошибка"], 0);
+    function addQ(q="", a=["","",""], c=0) {
+        const d = document.createElement('div'); d.className = 'editor-item';
+        d.innerHTML = `
+            <button class="btn-del" onclick="this.parentElement.remove()">×</button>
+            <input type="text" placeholder="Вопрос..." value="${q}" class="qi">
+            <div class="al">
+                ${[0,1,2].map(i => `
+                    <div class="ans-row">
+                        <input type="radio" name="r${Math.random()}" ${i===c?'checked':''}>
+                        <input type="text" value="${a[i]||''}" class="ai" placeholder="Вариант ${i+1}">
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        document.getElementById('factory').appendChild(d);
     }
 
-    function save() {
+    function geminiAI() {
+        const s = aiDB[Math.floor(Math.random()*aiDB.length)];
+        addQ(s.q, s.a, s.c);
+    }
+
+    function play() {
         qs = [];
-        document.querySelectorAll('#q-container > div').forEach(el => {
-            const t = el.querySelector('.qi').value;
+        document.querySelectorAll('.editor-item').forEach(box => {
+            const q = box.querySelector('.qi').value;
             const opts = [];
-            el.querySelectorAll('div > div').forEach(o => opts.push({t: o.querySelector('.ai').value, ok: o.querySelector('input').checked}));
-            if(t) qs.push({t, opts});
+            box.querySelectorAll('.ans-row').forEach(row => {
+                const txt = row.querySelector('.ai').value;
+                if(txt) opts.push({ t: txt, ok: row.querySelector('input[type="radio"]').checked });
+            });
+            if(q) qs.push({q, opts});
         });
-        activeQs = JSON.parse(JSON.stringify(qs));
-    }
-
-    function exportLink() {
-        save();
-        const data = btoa(unescape(encodeURIComponent(JSON.stringify({m: mode, d: qs}))));
-        const url = window.location.origin + window.location.pathname + "?data=" + data;
-        prompt("Скопируйте ссылку и отправьте другу:", url);
-    }
-
-    function importLink() {
-        const link = prompt("Вставьте ссылку:");
-        if(link && link.includes('data=')) {
-            const code = link.split('data=')[1];
-            const d = JSON.parse(decodeURIComponent(escape(atob(code))));
-            mode = d.m; qs = d.d; run();
-        }
-    }
-
-    function run() {
-        save(); if(!qs.length) return;
-        score=0; document.getElementById('score').innerText="0";
-        nav('scr-game'); render();
+        if(qs.length === 0) return alert("Добавьте вопросы!");
+        cur = 0; score = 0;
+        document.getElementById('sc-editor').classList.remove('active');
+        document.getElementById('sc-game').classList.add('active');
+        render();
     }
 
     function render() {
-        const v = document.getElementById('viewport'); const ui = document.getElementById('game-ui');
-        v.querySelectorAll('.obj').forEach(o => o.remove());
-        ui.innerHTML = ''; document.getElementById('game-modal').style.display = 'none';
-        
-        if(activeQs.length === 0) {
-            document.getElementById('game-task').innerText = "Все задания выполнены! 🏆";
-            confetti(); return;
+        const it = qs[cur]; const st = document.getElementById('stage'); const op = document.getElementById('options');
+        st.innerHTML = ""; op.innerHTML = ""; document.getElementById('q-text').innerText = it.q;
+        document.getElementById('score-val').innerText = `Очки: ${score}`;
+
+        if(mode === 'mole') {
+            it.opts.forEach((o, i) => {
+                const h = document.createElement('div'); h.style=`width:100px; height:40px; background:#333; border-radius:50%; position:absolute; bottom:40px; left:${20+i*130}px;`;
+                const m = document.createElement('div'); m.className = 'mole'; m.innerText = o.t;
+                m.onclick = () => check(o.ok);
+                h.appendChild(m); st.appendChild(h);
+                setTimeout(() => m.classList.add('up'), 300 + i*200);
+            });
         }
-
-        const q = activeQs[0];
-        document.getElementById('game-task').innerText = (mode==='wheel') ? "Крути колесо!" : q.t;
-
-        if(mode === 'wheel') {
-            v.innerHTML += `<div class="obj" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); width:0; height:0; border-top:15px solid transparent; border-bottom:15px solid transparent; border-left:30px solid var(--red); z-index:10;"></div>
-                            <div id="wh" class="wheel-box obj"></div>`;
-            const wh = document.getElementById('wh');
-            activeQs.forEach((_, i) => {
-                const s = document.createElement('div');
-                const deg = 360/activeQs.length;
-                s.style = `position:absolute; width:100%; height:100%; background:hsl(${i*50},70%,60%); clip-path: polygon(50% 50%, ${50+50*Math.cos(i*deg*Math.PI/180)}% ${50+50*Math.sin(i*deg*Math.PI/180)}%, ${50+50*Math.cos((i+1)*deg*Math.PI/180)}% ${50+50*Math.sin((i+1)*deg*Math.PI/180)}%);`;
-                wh.appendChild(s);
+        else if(mode === 'wheel') {
+            st.innerHTML = `<div style="position:absolute; top:0; z-index:10; font-size:30px;">▼</div><canvas id="c" width="360" height="360" style="transition:4s cubic-bezier(0.1,0,0.1,1)"></canvas>`;
+            const canvas = document.getElementById('c'); const ctx = canvas.getContext('2d');
+            const slice = (Math.PI*2)/it.opts.length;
+            it.opts.forEach((o, i) => {
+                ctx.beginPath(); ctx.fillStyle = `hsl(${i*120},70%,60%)`;
+                ctx.moveTo(180,180); ctx.arc(180,180,170,i*slice,(i+1)*slice); ctx.fill();
+                ctx.save(); ctx.translate(180,180); ctx.rotate(i*slice + slice/2);
+                ctx.fillStyle="white"; ctx.fillText(o.t, 70, 5); ctx.restore();
             });
-            ui.innerHTML = `<button class="btn btn-red" onclick="spinWheel()">КРУТИТЬ</button>`;
-        } else if(mode === 'plane') {
-            v.innerHTML += `<div id="pl" class="plane-hero obj">✈️</div>`;
-            q.opts.forEach((o, i) => {
-                const c = document.createElement('div'); c.className='cloud-item obj'; c.innerText=o.t;
-                c.style.top=(100+i*110)+'px';
-                c.onclick = () => { document.getElementById('pl').style.top=c.offsetTop+'px'; setTimeout(()=>check(o.ok, 0), 500); };
-                v.appendChild(c);
+            st.onclick = () => {
+                const rand = 1800 + Math.random()*2000; canvas.style.transform = `rotate(${rand}deg)`;
+                setTimeout(() => {
+                    const realDeg = (360 - (rand % 360)) % 360;
+                    const idx = Math.floor(realDeg / (360/it.opts.length));
+                    check(it.opts[idx].ok);
+                }, 4000);
+            };
+        }
+        else if(mode === 'slots') {
+            const wrap = document.createElement('div'); wrap.style.display="flex"; wrap.style.gap="10px";
+            it.opts.forEach((o, i) => {
+                const box = document.createElement('div'); box.className = 'slot-box';
+                box.innerHTML = `<div class="slot-reel" id="sl-${i}" style="top:0">
+                    <div style="height:100px; display:flex; align-items:center; justify-content:center;">🎰</div>
+                    <div style="height:100px; display:flex; align-items:center; justify-content:center; font-weight:bold;">${o.t}</div>
+                </div>`;
+                box.onclick = () => {
+                    document.getElementById(`sl-${i}`).style.top = "-100px";
+                    setTimeout(() => check(o.ok), 600);
+                };
+                wrap.appendChild(box);
             });
-        } else {
-            q.opts.forEach(o => {
-                const b = document.createElement('button'); b.className='btn btn-red'; b.innerText=o.t;
-                b.onclick = () => check(o.ok, 0); ui.appendChild(b);
+            st.appendChild(wrap);
+        }
+        else if(mode === 'anagram') {
+            const word = it.opts.find(o=>o.ok).t.toUpperCase(); let user = "";
+            const display = document.createElement('h1'); display.innerText = "_ ".repeat(word.length);
+            st.appendChild(display);
+            word.split('').sort(()=>Math.random()-0.5).forEach(l => {
+                const b = document.createElement('button'); b.innerText = l;
+                b.style="margin:5px; padding:10px; background:var(--main); color:white; border:none; border-radius:10px;";
+                b.onclick = () => { user += l; display.innerText = user; if(user === word) check(true); else if(user.length >= word.length) { alert("Ошибка!"); render(); } };
+                st.appendChild(b);
+            });
+        }
+        else if(mode === 'maze') {
+            st.innerHTML = `<div id="hero" style="position:absolute; left:10px; top:180px; font-size:30px; transition:0.4s;">👾</div>`;
+            it.opts.forEach((o, i) => {
+                const gate = document.createElement('div'); gate.style=`position:absolute; right:20px; top:${50 + i*120}px; border:3px solid var(--main); padding:10px; border-radius:10px; cursor:pointer;`;
+                gate.innerText = o.t; gate.onclick = () => {
+                    document.getElementById('hero').style.top = (50 + i*120) + "px";
+                    document.getElementById('hero').style.left = "300px";
+                    setTimeout(() => check(o.ok), 500);
+                };
+                st.appendChild(gate);
+            });
+        }
+        else if(mode === 'pairs') {
+            const all = [...it.opts, ...it.opts].sort(()=>Math.random()-0.5);
+            all.forEach(o => {
+                const card = document.createElement('div'); card.style="width:60px; height:60px; background:var(--main); margin:5px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:transparent;";
+                card.innerText = o.t; card.onclick = function() {
+                    this.style.color = "white"; this.style.background = "#fff"; this.style.border = "1px solid var(--main)"; this.style.color = "var(--main)";
+                    if(o.ok) setTimeout(()=>check(true), 500);
+                };
+                st.appendChild(card);
+            });
+        }
+        else { // Plane / Cards
+            it.opts.forEach((o, i) => {
+                const b = document.createElement('button'); b.className = 'btn btn-main'; b.innerText = o.t;
+                b.onclick = () => check(o.ok);
+                if(mode === 'plane') {
+                    const c = document.createElement('div'); c.className = 'cloud'; c.innerText = o.t;
+                    c.style.top = (50 + i*100) + "px"; c.onclick = () => check(o.ok);
+                    st.appendChild(c);
+                } else op.appendChild(b);
             });
         }
     }
 
-    function spinWheel() {
-        rot += 1440 + Math.random()*360;
-        document.getElementById('wh').style.transform = `rotate(${rot}deg)`;
-        setTimeout(() => {
-            const idx = Math.floor(Math.random()*activeQs.length);
-            const q = activeQs[idx];
-            const modal = document.getElementById('game-modal');
-            document.getElementById('modal-title').innerText = q.t;
-            const btnBox = document.getElementById('modal-buttons'); btnBox.innerHTML = '';
-            q.opts.forEach(o => {
-                const b = document.createElement('button'); b.className='btn btn-red'; b.innerText=o.t;
-                b.onclick = () => { if(o.ok) {score++; document.getElementById('score').innerText=score; confetti();} activeQs.splice(idx, 1); render(); };
-                btnBox.appendChild(b);
-            });
-            modal.style.display = 'flex';
-        }, 4000);
+    function check(isOk) {
+        if(isOk) { score += 10; cur++; if(cur < qs.length) render(); else finish(); }
+        else { score -= 5; alert("Неверно!"); }
     }
 
-    function check(ok, idx) {
-        if(ok) { score++; document.getElementById('score').innerText=score; confetti(); }
-        activeQs.splice(idx, 1); render();
+    function finish() {
+        document.getElementById('stage').innerHTML = `<h1>КОНЕЦ! 🎉<br>Очки: ${score}</h1>`;
+        for(let i=0; i<50; i++) {
+            const conf = document.createElement('div'); conf.className = 'confetti';
+            conf.style.left = Math.random()*100+"vw"; conf.style.background = `hsl(${Math.random()*360},100%,50%)`;
+            document.body.appendChild(conf);
+            conf.animate([{top:'-10px'}, {top:'100vh', transform:`rotate(${Math.random()*360}deg)`}], {duration: 2000+Math.random()*2000});
+        }
+    }
+
+    function exportGame() {
+        const code = btoa(unescape(encodeURIComponent(JSON.stringify({m:mode, q:qs}))));
+        prompt("Код скопирован вручную:", code);
+    }
+
+    function importGame() {
+        const code = prompt("Вставь код:");
+        if(!code) return;
+        const decoded = JSON.parse(decodeURIComponent(escape(atob(code))));
+        mode = decoded.m; qs = decoded.q;
+        openEditor(mode, true);
+        document.getElementById('factory').innerHTML = "";
+        qs.forEach(it => addQ(it.q, it.opts.map(o=>o.t), it.opts.findIndex(o=>o.ok)));
     }
 </script>
 </body>
