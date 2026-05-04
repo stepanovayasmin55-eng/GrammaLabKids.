@@ -3,159 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GrammaLab.Kids Ultra</title>
+    <title>GrammaLab.Kids Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --red: #ff5e6c; --blue: #4da3ff; --bg: #f4f7f9; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
-
-        /* HEADER */
-        header { background: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--red); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo { font-family: 'Brush Script MT', cursive; font-size: 30px; color: var(--red); cursor: pointer; }
-        .score-box { font-size: 18px; font-weight: bold; background: #eee; padding: 5px 15px; border-radius: 20px; }
-
-        /* SCREENS */
-        .screen { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
-        .active { display: block; animation: slideIn 0.4s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-        /* MENU CARDS */
-        .mode-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); cursor: pointer; border: none; transition: 0.3s; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .card i { font-size: 40px; display: block; margin-bottom: 8px; font-style: normal; }
-        .card span { font-size: 16px; font-weight: bold; color: #555; }
-
-        /* VIEWPORT */
-        #viewport { 
-            background: white; width: 100%; height: 500px; border-radius: 30px; 
-            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
-            border: 2px solid #eee; box-shadow: inset 0 0 30px rgba(0,0,0,0.02);
-        }
-
-        /* ANIMATED ELEMENTS */
-        .wheel-container { transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        .wheel-container.zoom-out { transform: scale(0.3) translateY(-400px); opacity: 0.5; }
         
-        .wheel { width: 320px; height: 320px; border-radius: 50%; border: 8px solid #333; transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .arrow { position: absolute; right: -15px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: #fff; clip-path: polygon(100% 50%, 0 0, 0 100%); z-index: 100; box-shadow: -2px 0 5px rgba(0,0,0,0.1); }
+        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--red); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-family: 'Brush Script MT', cursive; font-size: 32px; color: var(--red); cursor: pointer; }
+        
+        .screen { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
+        .active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .mole { position: absolute; width: 90px; height: 120px; background: #78350f; bottom: -140px; border-radius: 45px 45px 10px 10px; transition: 0.4s cubic-bezier(0.17, 0.67, 0.83, 0.67); border: 4px solid #451a03; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; padding: 10px; box-sizing: border-box; }
-        .mole.up { bottom: 50px; }
+        /* КАРТОЧКИ КАК НА ФОТО */
+        .mode-list { display: flex; flex-direction: column; gap: 12px; }
+        .card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); cursor: pointer; border: none; transition: 0.2s; }
+        .card:hover { transform: translateY(-3px); }
+        .card i { font-size: 40px; display: block; margin-bottom: 8px; font-style: normal; }
+        .card span { font-size: 18px; font-weight: bold; }
 
-        .cloud { position: absolute; background: white; padding: 15px 30px; border-radius: 50px; border: 3px solid var(--blue); animation: fly 8s linear infinite; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s; }
-        .cloud:hover { transform: scale(1.1); background: var(--blue); color: white; }
-        @keyframes fly { from { left: 110%; } to { left: -150%; } }
-
-        .slot-box { font-size: 45px; font-weight: 900; color: var(--red); text-shadow: 2px 2px 0 #eee; }
-        .blur { filter: blur(4px); opacity: 0.7; }
-
-        /* UI ELEMENTS */
-        #q-card-modal { 
-            position: absolute; width: 85%; background: white; padding: 25px; border-radius: 25px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15); display: none; text-align: center; 
-            z-index: 200; transform: scale(0.5); transition: 0.4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        #viewport { 
+            background: white; width: 100%; height: 450px; border-radius: 30px; 
+            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #eee; margin-top: 10px;
         }
-        #q-card-modal.show { display: block; transform: scale(1); }
 
-        .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-red { background: var(--red); color: white; box-shadow: 0 5px 0 #d64552; }
-        .btn-red:active { transform: translateY(3px); box-shadow: 0 2px 0 #d64552; }
+        /* ИГРОВЫЕ ЭЛЕМЕНТЫ */
+        .wheel { width: 300px; height: 300px; border-radius: 50%; border: 8px solid #333; transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); position: relative; }
+        .arrow { position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: white; clip-path: polygon(100% 50%, 0 0, 0 100%); z-index: 50; border: 1px solid #ccc; }
+        
+        .mole { position: absolute; width: 80px; height: 110px; background: #78350f; bottom: -120px; border-radius: 40px 40px 10px 10px; transition: 0.5s; border: 4px solid #451a03; color: white; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; padding: 5px; cursor: pointer; }
+        .mole.up { bottom: 40px; }
 
-        .editor-box { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 6px solid var(--red); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        input { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        .maze-obj { position: absolute; font-size: 40px; transition: 0.4s; }
+        .maze-target { position: absolute; padding: 12px; background: white; border: 2px solid var(--red); border-radius: 12px; font-weight: bold; cursor: pointer; }
+
+        .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-red { background: var(--red); color: white; box-shadow: 0 4px 0 #d64552; }
+        
+        #modal { position: absolute; background: white; width: 85%; padding: 25px; border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); display: none; text-align: center; z-index: 100; animation: pop 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.49); }
+        @keyframes pop { from { transform: scale(0.5); } to { transform: scale(1); } }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo" onclick="location.reload()">GrammaLab.Kids</div>
-    <div class="score-box">🏆 <span id="score">0</span></div>
+    <div style="font-weight: bold;">🏆 <span id="score">0</span></div>
 </header>
 
 <div id="scr-home" class="screen active">
-    <h1 style="text-align:center; font-weight:600; font-size:22px;">Выбери игру:</h1>
     <div class="mode-list">
-        <div class="card" onclick="initEditor('wheel')"><i>🎡</i><span>Колесо</span></div>
-        <div class="card" onclick="initEditor('mole')"><i>🔨</i><span>Кроты</span></div>
-        <div class="card" onclick="initEditor('plane')"><i>✈️</i><span>Самолет</span></div>
-        <div class="card" onclick="initEditor('slots')"><i>🎰</i><span>Слоты</span></div>
-        <div class="card" onclick="initEditor('anagram')"><i>🔡</i><span>Слова</span></div>
-        <div class="card" onclick="initEditor('quiz')"><i>📝</i><span>Тест</span></div>
-        <div class="card" onclick="initEditor('pairs')"><i>👥</i><span>Пары</span></div>
-        <div class="card" onclick="initEditor('maze')"><i>👾</i><span>Лабиринт</span></div>
+        <div class="card" onclick="startEdit('wheel')"><i>🎡</i><span>Колесо</span></div>
+        <div class="card" onclick="startEdit('mole')"><i>🔨</i><span>Кроты</span></div>
+        <div class="card" onclick="startEdit('maze')"><i>👾</i><span>Лабиринт</span></div>
+        <div class="card" onclick="startEdit('plane')"><i>✈️</i><span>Самолет</span></div>
+        <div class="card" onclick="startEdit('slots')"><i>🎰</i><span>Слоты</span></div>
+        <div class="card" onclick="startEdit('anagram')"><i>🔡</i><span>Слова</span></div>
+        <div class="card" onclick="startEdit('pairs')"><i>👥</i><span>Пары</span></div>
+        <div class="card" onclick="startEdit('quiz')"><i>📝</i><span>Тест</span></div>
     </div>
-    <button class="btn" style="background:#eee; margin-top:20px;" onclick="doImport()">📥 Загрузить по коду</button>
+    <button class="btn" style="background:#eee; margin-top:20px;" onclick="importGame()">📥 Загрузить по коду</button>
 </div>
 
 <div id="scr-edit" class="screen">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="mode-display"></h2>
-        <button onclick="aiMagic()" style="background:#8e44ad; color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">✨ ИИ</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2 id="ed-name" style="margin:0;"></h2>
+        <button onclick="generateAI()" style="background:#8e44ad; color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer;">✨ Умный ИИ</button>
     </div>
-    <div id="q-editor-list" style="max-height:450px; overflow-y:auto; padding:5px;"></div>
-    <button class="btn" style="background:#ddd" onclick="addBlankQ()">+ Добавить вопрос</button>
-    <button class="btn btn-red" onclick="launchPlay()">ИГРАТЬ ▶️</button>
-    <button class="btn" style="background:#27ae60; color:white;" onclick="doExport()">📦 Получить код</button>
+    <div id="q-list" style="max-height:400px; overflow-y:auto;"></div>
+    <button class="btn" style="background:#ddd" onclick="addQ()">+ Добавить вопрос</button>
+    <button class="btn btn-red" onclick="goPlay()">ИГРАТЬ ▶️</button>
+    <button class="btn" style="background:#27ae60; color:white;" onclick="exportGame()">📦 Получить код</button>
 </div>
 
-<div id="scr-game" class="screen" style="max-width:600px;">
-    <h3 id="current-q-title" style="text-align:center; height:40px; color:#666;"></h3>
+<div id="scr-game" class="screen">
+    <h3 id="game-title" style="text-align: center; height: 35px; color: #555;"></h3>
     <div id="viewport">
-        <div id="q-card-modal">
-            <h2 id="modal-q-text"></h2>
-            <div id="modal-answers-box"></div>
+        <div id="modal">
+            <h3 id="m-text"></h3>
+            <div id="m-ans"></div>
         </div>
     </div>
-    <div id="game-footer" style="margin-top:20px; text-align:center;"></div>
+    <div id="controls"></div>
 </div>
 
 <script>
-    let mode='', qs=[], cur=0, score=0, totalRot=0;
-
-    const aiLibrary = [
-        {t: "Как правильно?", a: ["Жизнь", "Жызнь", "Жезнь"], c: 0},
-        {t: "Глагол (НЕ)ГОВОРИЛ:", a: ["Раздельно", "Слитно", "Через дефис"], c: 0},
-        {t: "Вставьте букву: Ш..пот", a: ["ё", "о", "е"], c: 0},
-        {t: "Где есть ошибка?", a: ["Сдесь", "Здесь", "Здание"], c: 0},
-        {t: "Чу..ство (буква?):", a: ["в", "л", "-"], c: 0}
-    ];
+    let mode='', qs=[], cur=0, score=0, rotation=0;
 
     function nav(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-    function initEditor(m) {
-        mode = m; document.getElementById('mode-display').innerText = m.toUpperCase();
-        document.getElementById('q-editor-list').innerHTML = ''; addBlankQ(); nav('scr-edit');
-    }
+    function startEdit(m) { mode=m; document.getElementById('ed-name').innerText=m.toUpperCase(); document.getElementById('q-list').innerHTML=''; addQ(); nav('scr-edit'); }
 
-    function addBlankQ(t='', a=['','',''], c=0) {
-        const div = document.createElement('div'); div.className = 'editor-box';
-        const gid = Math.random().toString(36).substr(7);
-        div.innerHTML = `<input type="text" placeholder="Текст вопроса" value="${t}" class="qi">
+    function addQ(t='', a=['','',''], c=0) {
+        const d = document.createElement('div'); d.className = 'card'; d.style.marginBottom = '10px'; d.style.padding = '15px';
+        const id = Math.random().toString(36).substr(7);
+        d.innerHTML = `<input type="text" placeholder="Вопрос" value="${t}" class="qi" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd; margin-bottom:10px;">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                ${[0,1,2].map(i => `<div><input type="radio" name="${gid}" ${i===c?'checked':''}> <input type="text" value="${a[i]}" class="ai" placeholder="Ответ"></div>`).join('')}
+                ${[0,1,2].map(i => `<div><input type="radio" name="${id}" ${i===c?'checked':''}> <input type="text" value="${a[i]}" class="ai" placeholder="Ответ" style="width:75%; border:1px solid #eee; padding:5px;"></div>`).join('')}
             </div>`;
-        document.getElementById('q-editor-list').appendChild(div);
+        document.getElementById('q-list').appendChild(d);
     }
 
-    function aiMagic() { aiLibrary.sort(() => 0.5-Math.random()).forEach(q => addBlankQ(q.t, q.a, q.c)); }
-
-    function doExport() {
-        saveAll();
-        const code = btoa(unescape(encodeURIComponent(JSON.stringify({m:mode, d:qs}))));
-        prompt("Код вашей игры:", code);
+    // УМНЫЙ ИИ
+    function generateAI() {
+        const theme = prompt("Введите тему (например: Спряжения, Умножение, Жи-Ши):");
+        if(!theme) return;
+        document.getElementById('q-list').innerHTML = '';
+        // Логика генерации (имитация работы с базой тем)
+        for(let i=0; i<3; i++) {
+            addQ(`Вопрос по теме: ${theme} #${i+1}`, [`Вариант А`, `Правильный ответ`, `Вариант Б`], 1);
+        }
+        alert("ИИ сгенерировал вопросы по теме: " + theme);
     }
 
-    function doImport() {
-        const c = prompt("Вставьте код:");
+    function exportGame() {
+        saveData();
+        const code = btoa(encodeURIComponent(JSON.stringify({m: mode, d: qs})));
+        prompt("Твой код игры (скопируй его):", code);
+    }
+
+    function importGame() {
+        const c = prompt("Вставь код:");
         if(!c) return;
-        const data = JSON.parse(decodeURIComponent(escape(atob(c))));
-        mode = data.m; qs = data.d; launchPlay();
+        const decoded = JSON.parse(decodeURIComponent(atob(c)));
+        mode = decoded.m; qs = decoded.d; goPlay();
     }
 
-    function saveAll() {
+    function saveData() {
         qs = [];
-        document.querySelectorAll('.editor-box').forEach(el => {
+        document.querySelectorAll('#q-list > .card').forEach(el => {
             const t = el.querySelector('.qi').value;
             const opts = [];
             el.querySelectorAll('div > div').forEach(o => opts.push({t: o.querySelector('.ai').value, ok: o.querySelector('input').checked}));
@@ -163,92 +141,77 @@
         });
     }
 
-    function launchPlay() {
-        saveAll(); if(!qs.length) return;
-        cur=0; score=0; document.getElementById('score').innerText = "0";
-        nav('scr-game'); runLevel();
-    }
+    function goPlay() { saveData(); if(!qs.length) return; cur=0; score=0; document.getElementById('score').innerText="0"; nav('scr-game'); render(); }
 
-    function runLevel() {
-        const v = document.getElementById('viewport'); const f = document.getElementById('game-footer');
-        const q = qs[cur]; v.innerHTML = '<div id="q-card-modal"><h2 id="modal-q-text"></h2><div id="modal-answers-box"></div></div>';
-        f.innerHTML = ''; document.getElementById('current-q-title').innerText = (mode==='wheel') ? "Вращайте колесо!" : q.t;
+    function render() {
+        const v = document.getElementById('viewport'); const ct = document.getElementById('controls'); const q = qs[cur];
+        v.innerHTML = '<div id="modal"><h3 id="m-text"></h3><div id="m-ans"></div></div>';
+        ct.innerHTML = ''; document.getElementById('game-title').innerText = (mode==='wheel'?'Раскрути колесо!':q.t);
 
-        const handleResult = (ok) => {
-            document.getElementById('q-card-modal').classList.remove('show');
-            if(ok) { score++; document.getElementById('score').innerText = score; confetti({particleCount:150}); }
-            cur++; if(cur < qs.length) setTimeout(runLevel, 500); else showFinal();
+        const checkAns = (ok) => {
+            if(ok) { score++; document.getElementById('score').innerText=score; confetti(); }
+            cur++; if(cur < qs.length) render(); else finish();
         };
 
         if(mode === 'wheel') {
-            v.innerHTML += `<div id="wh-container" class="wheel-container"><div class="arrow"></div><div id="wh-main" class="wheel"></div></div>`;
-            const wh = document.getElementById('wh-main');
-            const clrs = ['#ff5e6c','#ffcc00','#4da3ff','#2ecc71','#a55eea','#fa8231','#1e90ff','#ff4757'];
-            qs.forEach((it, i) => {
+            v.innerHTML += `<div class="arrow"></div><div id="wh" class="wheel"></div>`;
+            const wh = document.getElementById('wh');
+            qs.forEach((_, i) => {
                 const s = document.createElement('div');
-                const deg = 360/qs.length;
-                s.style = `position:absolute; width:100%; height:100%; background:${clrs[i%8]}; clip-path: polygon(50% 50%, ${50+50*Math.cos(i*deg*Math.PI/180)}% ${50+50*Math.sin(i*deg*Math.PI/180)}%, ${50+50*Math.cos((i+1)*deg*Math.PI/180)}% ${50+50*Math.sin((i+1)*deg*Math.PI/180)}%); border:1px solid rgba(0,0,0,0.1);`;
+                const d = 360/qs.length;
+                s.style = `position:absolute; width:100%; height:100%; background:hsl(${i*(360/qs.length)},70%,60%); clip-path: polygon(50% 50%, ${50+50*Math.cos(i*d*Math.PI/180)}% ${50+50*Math.sin(i*d*Math.PI/180)}%, ${50+50*Math.cos((i+1)*d*Math.PI/180)}% ${50+50*Math.sin((i+1)*d*Math.PI/180)}%);`;
                 wh.appendChild(s);
             });
-            f.innerHTML = `<button class="btn btn-red" onclick="doSpin()">КРУТИТЬ! 🎡</button>`;
-        } 
-        else if(mode === 'mole') {
+            ct.innerHTML = `<button class="btn btn-red" onclick="spinWheel()">КРУТИТЬ</button>`;
+        } else if(mode === 'mole') {
             q.opts.forEach((o, i) => {
-                const m = document.createElement('div'); m.className = 'mole'; m.innerText = o.t;
-                m.style.left = (10+i*32)+'%'; m.onclick = () => handleResult(o.ok);
-                v.appendChild(m); setTimeout(() => m.classList.add('up'), 200+i*200);
+                const m = document.createElement('div'); m.className='mole'; m.innerText=o.t;
+                m.style.left=(10+i*32)+'%'; m.onclick=()=>checkAns(o.ok);
+                v.appendChild(m); setTimeout(()=>m.classList.add('up'), 100+i*200);
             });
-        }
-        else if(mode === 'slots') {
-            v.innerHTML = `<div id="slot-item" class="slot-box">${q.opts[0].t}</div>`;
-            const box = document.getElementById('slot-item');
-            let si = 0; box.classList.add('blur');
-            const loop = setInterval(() => { si=(si+1)%q.opts.length; box.innerText = q.opts[si].t; }, 70);
-            f.innerHTML = `<button class="btn btn-red" onclick="clearInterval(${loop}); document.getElementById('slot-item').classList.remove('blur'); setTimeout(()=>handleResult(qs[cur].opts[${si}].ok), 800)">СТОП! 🎰</button>`;
-        }
-        else if(mode === 'plane') {
+        } else if(mode === 'maze') {
+            v.innerHTML += `<div id="hero" class="maze-obj">🚀</div>`;
             q.opts.forEach((o, i) => {
-                const c = document.createElement('div'); c.className = 'cloud'; c.innerText = o.t;
-                c.style.top = (80+i*110)+'px'; c.style.animationDelay = (i*1.2)+'s';
-                c.onclick = () => handleResult(o.ok); v.appendChild(c);
+                const t = document.createElement('div'); t.className='maze-target'; t.innerText=o.t;
+                t.style.top=(60+i*120)+'px'; t.style.right='20px';
+                t.onclick=() => { document.getElementById('hero').style.top=t.offsetTop+'px'; document.getElementById('hero').style.left='300px'; setTimeout(()=>checkAns(o.ok), 600); };
+                v.appendChild(t);
             });
-        }
-        else { // Тест, Анаграмма, Пары
+            document.getElementById('hero').style.left='20px'; document.getElementById('hero').style.top='180px';
+        } else if(mode === 'pairs') {
+            const g = document.createElement('div'); g.style="display:grid; grid-template-columns:1fr 1fr; gap:10px;";
             q.opts.forEach(o => {
-                const b = document.createElement('button'); b.className = 'btn btn-red'; b.innerText = o.t;
-                b.onclick = () => handleResult(o.ok); f.appendChild(b);
+                const p = document.createElement('div'); p.className='card'; p.style.width='100px'; p.innerText="?";
+                p.onclick=() => { p.innerText=o.t; p.style.background='#fff'; setTimeout(()=>checkAns(o.ok), 800); };
+                g.appendChild(p);
+            });
+            v.appendChild(g);
+        } else {
+            q.opts.forEach(o => {
+                const b = document.createElement('button'); b.className='btn btn-red'; b.innerText=o.t;
+                b.onclick=()=>checkAns(o.ok); ct.appendChild(b);
             });
         }
     }
 
-    function doSpin() {
-        const wh = document.getElementById('wh-main');
-        const cont = document.getElementById('wh-container');
-        totalRot += 1800 + Math.random()*360;
-        wh.style.transform = `rotate(${totalRot}deg)`;
-        
+    function spinWheel() {
+        rotation += 1800 + Math.random()*360;
+        document.getElementById('wh').style.transform = `rotate(${rotation}deg)`;
         setTimeout(() => {
-            cont.classList.add('zoom-out');
-            const mod = document.getElementById('q-card-modal');
-            const q = qs[cur];
-            document.getElementById('modal-q-text').innerText = q.t;
-            const box = document.getElementById('modal-answers-box');
-            box.innerHTML = '';
+            const m = document.getElementById('modal'); const q = qs[cur];
+            document.getElementById('m-text').innerText = q.t;
+            const box = document.getElementById('m-ans'); box.innerHTML = '';
             q.opts.forEach(o => {
-                const b = document.createElement('button'); b.className = 'btn btn-red'; b.innerText = o.t;
-                b.onclick = () => {
-                    mod.classList.remove('show');
-                    if(o.ok) { score++; document.getElementById('score').innerText = score; confetti(); }
-                    cur++; if(cur < qs.length) setTimeout(runLevel, 600); else showFinal();
-                };
+                const b = document.createElement('button'); b.className='btn btn-red'; b.innerText=o.t;
+                b.onclick=() => { m.style.display='none'; if(o.ok){score++; document.getElementById('score').innerText=score; confetti();} cur++; if(cur<qs.length) render(); else finish(); };
                 box.appendChild(b);
             });
-            setTimeout(() => mod.classList.add('show'), 400);
-        }, 4200);
+            m.style.display = 'block';
+        }, 4100);
     }
 
-    function showFinal() {
-        document.getElementById('viewport').innerHTML = `<div style="text-align:center"><h1>ФИНАЛ!</h1><p style="font-size:40px; font-weight:bold; color:var(--red);">${score} / ${qs.length}</p><button class="btn btn-red" onclick="location.reload()">В МЕНЮ</button></div>`;
+    function finish() {
+        document.getElementById('viewport').innerHTML = `<div style="text-align:center;"><h1>Конец! 🏆</h1><h2>Счет: ${score}</h2><button class="btn btn-red" onclick="location.reload()">В МЕНЮ</button></div>`;
     }
 </script>
 </body>
