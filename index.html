@@ -3,257 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GrammaLab Ultimate 8</title>
+    <title>GrammaLab 8 Ultimate PRO</title>
     <style>
         :root { --main: #00a2ff; --bg: #f0f4f8; --text: #2d3436; --ai: #6c5ce7; --share: #2ecc71; --accent: #ff7675; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .logo { font-weight: 900; color: var(--main); font-size: 22px; }
-        .screen { display: none; padding: 15px; max-width: 600px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+        .screen { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* МЕНЮ */
+        
+        /* ГРИД МЕНЮ */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: white; padding: 20px; border-radius: 22px; text-align: center; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .card:hover { transform: translateY(-3px); }
+        .card { background: white; padding: 20px; border-radius: 22px; text-align: center; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
+        .card:active { transform: scale(0.95); }
         .card span { display: block; font-size: 35px; margin-bottom: 5px; }
 
         /* РЕДАКТОР */
-        .editor-item { background: white; padding: 20px; border-radius: 24px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
-        input[type="text"] { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #edf2f7; margin-bottom: 8px; outline: none; }
-        .ans-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-
-        /* КНОПКИ */
-        .btn { padding: 15px; border-radius: 18px; border: none; font-weight: 700; cursor: pointer; width: 100%; margin: 5px 0; font-size: 16px; color: white; }
-        .btn-main { background: var(--main); box-shadow: 0 4px 0 #0081cc; }
-        .btn-ai { background: var(--ai); }
-
-        /* СЦЕНА */
-        #stage { background: white; border-radius: 30px; height: 420px; position: relative; border: 4px solid var(--main); overflow: hidden; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-        /* СПЕЦИФИКА ИГР */
-        .mole { width: 80px; height: 90px; background: #8d6e63; border-radius: 30px 30px 10px 10px; position: absolute; bottom: -100px; transition: 0.4s; color: white; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; padding: 5px; box-sizing: border-box; }
-        .mole.up { bottom: 40px; }
+        .editor-item { background: white; padding: 15px; border-radius: 20px; margin-bottom: 10px; border: 1px solid #eee; }
+        input[type="text"] { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; margin: 5px 0; box-sizing: border-box; }
+        .btn { padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin: 5px 0; color: white; }
+        .btn-main { background: var(--main); }
+        .btn-share { background: var(--share); }
         
-        .slot-machine { display: flex; gap: 10px; background: #333; padding: 20px; border-radius: 15px; border: 4px solid #gold; }
-        .slot-box { width: 80px; height: 100px; background: white; border-radius: 10px; overflow: hidden; position: relative; }
-        .slot-reel { position: absolute; width: 100%; transition: 2s cubic-bezier(0.45, 0.05, 0.55, 0.95); }
-        .slot-item { height: 100px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; text-align: center; }
+        /* СЦЕНА */
+        #stage { background: white; border-radius: 30px; height: 400px; position: relative; border: 4px solid var(--main); overflow: hidden; display: flex; align-items: center; justify-content: center; }
 
-        .confetti { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 9999; }
+        /* СЛОТЫ (АНИМАЦИЯ ЛЕНТЫ) */
+        .slot-box { width: 90px; height: 110px; border: 2px solid var(--main); border-radius: 15px; overflow: hidden; background: #fff; position: relative; }
+        .slot-reel { position: absolute; width: 100%; top: 0; transition: top 2s cubic-bezier(0.1, 0, 0.1, 1); }
+        .slot-item { height: 110px; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; font-size: 13px; padding: 5px; box-sizing: border-box; border-bottom: 1px solid #eee; }
+
+        /* КРОТ */
+        .mole { width: 80px; height: 90px; background: #8d6e63; border-radius: 30px 30px 10px 10px; position: absolute; bottom: -100px; transition: 0.4s; color: white; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; padding: 5px; box-sizing: border-box; }
+        .mole.up { bottom: 20px; }
+
+        /* КОНФЕТТИ */
+        .confetti { position: fixed; width: 10px; height: 10px; z-index: 999; pointer-events: none; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">GrammaLab 8</div>
-    <div id="score-val" style="font-weight:bold; color:var(--main)">Баллы: 0</div>
-    <button onclick="location.reload()" style="background:none; border:none; font-size: 24px; cursor:pointer;">🏠</button>
+    <div class="logo">Gramma 8 PRO</div>
+    <div id="score-ui" style="font-weight:bold;">0 🏆</div>
+    <button onclick="location.reload()" style="background:none; border:none; font-size:24px;">🏠</button>
 </header>
 
 <div id="sc-menu" class="screen active">
     <div class="grid">
-        <div class="card" onclick="openEditor('mole')"><span>🔨</span><b>Крот</b></div>
-        <div class="card" onclick="openEditor('plane')"><span>✈️</span><b>Погоня</b></div>
-        <div class="card" onclick="openEditor('wheel')"><span>🎡</span><b>Колесо</b></div>
-        <div class="card" onclick="openEditor('cards')"><span>💡</span><b>Карточки</b></div>
-        <div class="card" onclick="openEditor('anagram')"><span>🔠</span><b>Слова</b></div>
-        <div class="card" onclick="openEditor('maze')"><span>👾</span><b>Лабиринт</b></div>
-        <div class="card" onclick="openEditor('slots')"><span>🎰</span><b>Автомат</b></div>
-        <div class="card" onclick="openEditor('pairs')"><span>👥</span><b>Пары</b></div>
+        <div class="card" onclick="openEditor('mole')"><span>🔨</span>Крот</div>
+        <div class="card" onclick="openEditor('plane')"><span>✈️</span>Погоня</div>
+        <div class="card" onclick="openEditor('wheel')"><span>🎡</span>Колесо</div>
+        <div class="card" onclick="openEditor('cards')"><span>💡</span>Карточки</div>
+        <div class="card" onclick="openEditor('anagram')"><span>🔠</span>Слова</div>
+        <div class="card" onclick="openEditor('maze')"><span>👾</span>Лабиринт</div>
+        <div class="card" onclick="openEditor('slots')"><span>🎰</span>Автомат</div>
+        <div class="card" onclick="openEditor('pairs')"><span>👥</span>Пары</div>
     </div>
+    <button class="btn btn-share" style="margin-top:20px" onclick="importGame()">📥 ЗАГРУЗИТЬ ИГРУ</button>
 </div>
 
 <div id="sc-editor" class="screen">
-    <button class="btn btn-ai" onclick="geminiAI()">✨ ИИ: Сгенерировать вопрос</button>
+    <button class="btn btn-share" onclick="exportGame()">📤 КОПИРОВАТЬ КОД ИГРЫ</button>
     <div id="factory"></div>
-    <button class="btn btn-main" style="background:#636e72" onclick="addQ()">➕ ЕЩЕ ВОПРОС</button>
-    <button class="btn btn-main" onclick="play()">ЗАПУСТИТЬ ИГРУ ▶️</button>
+    <button class="btn" style="background:#636e72" onclick="addQ()">➕ ЕЩЕ ВОПРОС</button>
+    <button class="btn btn-main" onclick="play()">ИГРАТЬ ▶️</button>
 </div>
 
 <div id="sc-game" class="screen">
-    <h3 id="q-text" style="text-align:center; min-height:40px;"></h3>
+    <h3 id="q-txt" style="text-align:center;"></h3>
     <div id="stage"></div>
-    <div id="options" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+    <div id="options" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;"></div>
 </div>
 
 <script>
-    let mode = '', qs = [], currentQ = null, score = 0;
+    let mode = '', qs = [], cur = 0, score = 0;
 
-    function openEditor(m) {
+    function openEditor(m, isImport = false) {
         mode = m;
         document.getElementById('sc-menu').classList.remove('active');
         document.getElementById('sc-editor').classList.add('active');
-        addQ();
+        if(!isImport) { document.getElementById('factory').innerHTML = ""; addQ(); }
     }
 
     function addQ(q="", a=["","",""], c=0) {
         const d = document.createElement('div'); d.className = 'editor-item';
         d.innerHTML = `
-            <button class="btn-del" onclick="this.parentElement.remove()">×</button>
-            <input type="text" placeholder="Введите вопрос..." value="${q}" class="qi">
-            <div class="al">
-                ${[0,1,2].map(i => `
-                    <div class="ans-row">
-                        <input type="radio" name="r${Math.random()}" ${i===c?'checked':''}>
-                        <input type="text" value="${a[i]||''}" class="ai" placeholder="Ответ ${i+1}">
-                    </div>
-                `).join('')}
-            </div>
+            <input type="text" placeholder="Вопрос..." value="${q}" class="qi">
+            ${a.map((v, i) => `
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <input type="radio" name="r${Math.random()}" ${i===c?'checked':''}>
+                    <input type="text" placeholder="Ответ ${i+1}" value="${v}" class="ai">
+                </div>
+            `).join('')}
         `;
         document.getElementById('factory').appendChild(d);
     }
 
-    function geminiAI() {
-        const db = [
-            {q: "Как пишется (со..нце)?", a: ["л", "-", "н"], c: 0},
-            {q: "Столица РФ?", a: ["Москва", "Питер", "Сочи"], c: 0},
-            {q: "6 x 7 = ?", a: ["42", "48", "36"], c: 0}
-        ];
-        const s = db[Math.floor(Math.random()*db.length)];
-        addQ(s.q, s.a, s.c);
+    function exportGame() {
+        saveData();
+        const code = btoa(unescape(encodeURIComponent(JSON.stringify({m: mode, q: qs}))));
+        navigator.clipboard.writeText(code);
+        alert("Код игры скопирован! Отправь его другу.");
     }
 
-    function play() {
+    function importGame() {
+        const code = prompt("Вставь код игры:");
+        if(!code) return;
+        const dec = JSON.parse(decodeURIComponent(escape(atob(code))));
+        openEditor(dec.m, true);
+        dec.q.forEach(it => addQ(it.q, it.opts.map(o=>o.t), it.opts.findIndex(o=>o.ok)));
+    }
+
+    function saveData() {
         qs = [];
-        document.querySelectorAll('.editor-item').forEach(box => {
-            const q = box.querySelector('.qi').value;
+        document.querySelectorAll('.editor-item').forEach(el => {
+            const q = el.querySelector('.qi').value;
             const opts = [];
-            box.querySelectorAll('.ans-row').forEach(row => {
-                const txt = row.querySelector('.ai').value;
-                if(txt) opts.push({ t: txt, ok: row.querySelector('input[type="radio"]').checked });
+            el.querySelectorAll('div').forEach(row => {
+                const t = row.querySelector('.ai').value;
+                if(t) opts.push({t, ok: row.querySelector('input[type="radio"]').checked});
             });
             if(q) qs.push({q, opts});
         });
-        if(qs.length < 1) return alert("Добавьте вопросы!");
+    }
+
+    function play() {
+        saveData();
+        if(qs.length === 0) return;
+        cur = 0; score = 0;
         document.getElementById('sc-editor').classList.remove('active');
         document.getElementById('sc-game').classList.add('active');
         render();
     }
 
     function render() {
-        const st = document.getElementById('stage');
-        const op = document.getElementById('options');
-        st.innerHTML = ""; op.innerHTML = "";
-        document.getElementById('q-text').innerText = (mode === 'wheel' && !currentQ) ? "Крути колесо!" : (currentQ ? currentQ.q : "");
-        document.getElementById('score-val').innerText = `Баллы: ${score}`;
+        const it = qs[cur]; const st = document.getElementById('stage'); const op = document.getElementById('options');
+        st.innerHTML = ""; op.innerHTML = ""; document.getElementById('q-txt').innerText = it.q;
+        document.getElementById('score-ui').innerText = score + " 🏆";
 
-        if (mode === 'wheel' && !currentQ) {
-            renderWheel();
-            return;
-        }
-
-        const it = currentQ || qs[0]; 
-        if(!currentQ) currentQ = it;
-
-        if(mode === 'mole') {
-            it.opts.forEach((o, i) => {
-                const h = document.createElement('div'); h.style=`width:90px; height:30px; background:#222; border-radius:50%; position:absolute; bottom:50px; left:${30+i*140}px;`;
-                const m = document.createElement('div'); m.className = 'mole'; m.innerText = o.t;
-                m.onclick = () => check(o.ok);
-                h.appendChild(m); st.appendChild(h);
-                setTimeout(() => m.classList.add('up'), 200 + i*300);
-            });
-        }
-        else if(mode === 'slots') {
-            const mch = document.createElement('div'); mch.className = 'slot-machine';
+        if(mode === 'slots') {
+            const wrap = document.createElement('div'); wrap.style.display="flex"; wrap.style.gap="10px";
             it.opts.forEach((o, i) => {
                 const box = document.createElement('div'); box.className = 'slot-box';
-                box.innerHTML = `<div class="slot-reel" id="r-${i}" style="top:0">
-                    <div class="slot-item">🎰</div><div class="slot-item">${o.t}</div>
+                box.innerHTML = `<div class="slot-reel" id="r${i}">
+                    <div class="slot-item">🎰</div><div class="slot-item">💎</div>
+                    <div class="slot-item">🔥</div><div class="slot-item">${o.t}</div>
                 </div>`;
                 box.onclick = () => {
-                    document.getElementById(`r-${i}`).style.top = "-100px";
-                    setTimeout(() => check(o.ok), 1000);
+                    document.getElementById(`r${i}`).style.top = "-330px";
+                    setTimeout(() => check(o.ok), 2100);
                 };
-                mch.appendChild(box);
+                wrap.appendChild(box);
             });
-            st.appendChild(mch);
+            st.appendChild(wrap);
+        } 
+        else if(mode === 'wheel') {
+            st.innerHTML = `<canvas id="wc" width="300" height="300" style="transition:3s cubic-bezier(0.1, 0, 0, 1)"></canvas><div style="position:absolute; top:5px; font-size:30px">📍</div>`;
+            const c = document.getElementById('wc'); const ctx = c.getContext('2d');
+            const slice = (Math.PI*2)/it.opts.length;
+            it.opts.forEach((o, i) => {
+                ctx.beginPath(); ctx.fillStyle = `hsl(${i*50}, 70%, 60%)`;
+                ctx.moveTo(150,150); ctx.arc(150,150,140,i*slice,(i+1)*slice); ctx.fill();
+                ctx.save(); ctx.translate(150,150); ctx.rotate(i*slice + slice/2);
+                ctx.fillStyle="white"; ctx.fillText(o.t.substring(0,8), 60, 5); ctx.restore();
+            });
+            st.onclick = () => {
+                const deg = 1800 + Math.random()*1000; c.style.transform = `rotate(${deg}deg)`;
+                setTimeout(() => {
+                    const real = (it.opts.length - Math.floor((deg % 360) / (360/it.opts.length))) % it.opts.length;
+                    check(it.opts[real].ok);
+                }, 3100);
+            };
+        }
+        else if(mode === 'mole') {
+            it.opts.forEach((o, i) => {
+                const h = document.createElement('div'); h.style=`width:90px; height:30px; background:#333; border-radius:50%; position:absolute; bottom:30px; left:${20+i*130}px;`;
+                const m = document.createElement('div'); m.className = 'mole'; m.innerText = o.t;
+                m.onclick = () => check(o.ok); h.appendChild(m); st.appendChild(h);
+                setTimeout(() => m.classList.add('up'), 300 + i*200);
+            });
         }
         else if(mode === 'anagram') {
-            let word = it.opts.find(o=>o.ok).t.toUpperCase();
-            let typed = "";
-            const h = document.createElement('h2'); h.innerText = "_ ".repeat(word.length);
-            st.appendChild(h);
+            const word = it.opts.find(o=>o.ok).t.toUpperCase(); let user = "";
+            const res = document.createElement('h2'); res.innerText = "_ ".repeat(word.length); st.appendChild(res);
             word.split('').sort(()=>Math.random()-0.5).forEach(l => {
-                const b = document.createElement('button'); b.innerText = l;
-                b.style="margin:5px; padding:15px; background:var(--main); color:white; border:none; border-radius:10px;";
-                b.onclick = () => { typed += l; h.innerText = typed; if(typed === word) check(true); else if(typed.length >= word.length) { alert("Неверно!"); typed=""; h.innerText="_ ".repeat(word.length); } };
+                const b = document.createElement('button'); b.innerText = l; b.className = "btn btn-main";
+                b.style.width="auto"; b.style.margin="5px";
+                b.onclick = () => { user += l; res.innerText = user; if(user === word) check(true); };
                 st.appendChild(b);
             });
         }
         else {
             it.opts.forEach(o => {
-                const b = document.createElement('button'); b.className = 'btn btn-main'; b.innerText = o.t;
+                const b = document.createElement('button'); b.className = "btn btn-main"; b.innerText = o.t;
                 b.onclick = () => check(o.ok);
-                op.appendChild(b);
+                if(mode === 'plane') {
+                    const cl = document.createElement('div'); cl.style=`position:absolute; background:white; border:2px solid var(--main); padding:10px; border-radius:15px; left:110%; top:${50+Math.random()*200}px; animation: fly 4s linear infinite; cursor:pointer;`;
+                    cl.innerText = o.t; cl.onclick = () => check(o.ok); 
+                    st.appendChild(cl);
+                } else op.appendChild(b);
             });
         }
     }
 
-    function renderWheel() {
-        const st = document.getElementById('stage');
-        st.innerHTML = `<div style="position:absolute; top:10px; z-index:10; font-size:30px;">▼</div><canvas id="wheel-c" width="360" height="360" style="transition:4s cubic-bezier(0.1, 0, 0.1, 1)"></canvas>
-        <button class="btn btn-main" onclick="spinWheel()" style="width:200px; margin-top:20px;">КРУТИТЬ!</button>`;
-        const canvas = document.getElementById('wheel-c');
-        const ctx = canvas.getContext('2d');
-        const slice = (Math.PI*2)/qs.length;
-        qs.forEach((q, i) => {
-            ctx.beginPath(); ctx.fillStyle = `hsl(${i*(360/qs.length)}, 70%, 60%)`;
-            ctx.moveTo(180,180); ctx.arc(180,180,170, i*slice, (i+1)*slice); ctx.fill();
-            ctx.save(); ctx.translate(180,180); ctx.rotate(i*slice + slice/2);
-            ctx.fillStyle="white"; ctx.font="bold 14px Arial"; ctx.fillText(i+1, 100, 5); ctx.restore();
-        });
-    }
-
-    function spinWheel() {
-        const canvas = document.getElementById('wheel-c');
-        const deg = 1800 + Math.random()*2000;
-        canvas.style.transform = `rotate(${deg}deg)`;
-        setTimeout(() => {
-            const realDeg = (360 - (deg % 360)) % 360;
-            const idx = Math.floor(realDeg / (360/qs.length));
-            currentQ = qs[idx];
-            qs.splice(idx, 1); // Удаляем вопрос из списка
-            render();
-        }, 4000);
-    }
-
-    function check(isOk) {
-        if(isOk) {
-            score += 10;
-            alert("Верно! +10 баллов");
-            currentQ = null;
-            if(qs.length > 0 || mode === 'wheel') {
-                if(qs.length === 0 && mode === 'wheel') finish();
-                else {
-                    if(mode !== 'wheel') { currentQ = qs.shift(); }
-                    render();
-                }
-            } else { finish(); }
-        } else {
-            score = Math.max(0, score - 5);
-            alert("Ошибка! -5 баллов");
-        }
+    function check(ok) {
+        if(ok) { score += 10; cur++; if(cur < qs.length) render(); else finish(); }
+        else { score -= 5; alert("Ошибка!"); render(); }
     }
 
     function finish() {
-        document.getElementById('stage').innerHTML = `<h1 style="color:var(--main)">ФИНИШ!<br>Баллы: ${score}</h1>`;
-        document.getElementById('q-text').innerText = "Вы прошли все вопросы!";
-        document.getElementById('options').innerHTML = "";
-        spawnConfetti();
-    }
-
-    function spawnConfetti() {
+        document.getElementById('stage').innerHTML = `<h1>ФИНАЛ! 🎉<br>Счет: ${score}</h1>`;
         for(let i=0; i<80; i++) {
             const c = document.createElement('div'); c.className = 'confetti';
             c.style.left = Math.random()*100+"vw"; c.style.background = `hsl(${Math.random()*360},100%,50%)`;
             document.body.appendChild(c);
-            c.animate([{top:'-10px'}, {top:'100vh', transform:`rotate(${Math.random()*360}deg)`}], {duration: 2000+Math.random()*3000});
+            c.animate([{top:'-10px'}, {top:'100vh', transform:`rotate(${Math.random()*360}deg)`}], {duration: 2000+Math.random()*2000});
         }
     }
 </script>
+<style> @keyframes fly { from { left: 110%; } to { left: -150px; } } </style>
 </body>
 </html>
