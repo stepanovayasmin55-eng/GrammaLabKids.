@@ -3,54 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GrammaLab Pro: 13 Themes & Sharing</title>
+    <title>GrammaLab Ultra: Fixed & Animated</title>
     <style>
         :root { --p: #3498db; --bg: #f5f6fa; --ai: #8e44ad; --s: #2ecc71; --r: #e74c3c; --dark: #2c3e50; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; touch-action: none; }
         
-        header { background: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 4px solid var(--p); }
-        .logo { font-weight: 900; color: var(--p); font-size: 1.2rem; }
-        .score { background: var(--p); color: #fff; padding: 5px 15px; border-radius: 20px; font-weight: 800; }
+        header { background: #fff; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 4px solid var(--p); z-index: 100; position: relative; }
+        .logo { font-weight: 900; color: var(--p); font-size: 1.1rem; }
+        .score { background: var(--p); color: #fff; padding: 5px 12px; border-radius: 20px; font-weight: 800; }
 
-        .screen { display: none; padding: 15px; height: calc(100vh - 70px); box-sizing: border-box; overflow-y: auto; position: relative; }
+        .screen { display: none; padding: 15px; height: calc(100vh - 65px); box-sizing: border-box; overflow-y: auto; position: relative; }
         .active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .btn { padding: 16px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; width: 100%; margin: 5px 0; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); font-size: 14px; }
+        .btn { padding: 14px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; width: 100%; margin: 5px 0; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); font-size: 14px; }
         .btn-p { background: var(--p); color: #fff; }
         .btn-ai { background: var(--ai); color: #fff; }
         .btn-manual { background: #fff; border: 1px solid #ccc; color: #555; }
 
-        #stage { height: 320px; position: relative; overflow: hidden; background: #fff; border-radius: 25px; border: 4px solid var(--dark); margin-bottom: 10px; }
+        #stage { height: 320px; position: relative; overflow: hidden; background: #fff; border-radius: 20px; border: 4px solid var(--dark); margin-bottom: 10px; }
         
-        /* ОБЪЕКТЫ */
-        #player { width: 22px; height: 22px; background: var(--p); position: absolute; border-radius: 6px; z-index: 10; border: 2px solid #fff; }
-        .target { position: absolute; padding: 8px; background: #f1f2f6; border-radius: 12px; font-size: 11px; font-weight: bold; border: 2px solid #ddd; }
-        .mole { width: 80px; height: 80px; background: var(--dark); color: #fff; position: absolute; bottom: -100px; transition: 0.3s; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 11px; text-align: center; cursor: pointer; padding: 5px; box-sizing: border-box; }
-        .mole.up { bottom: 30px; }
+        /* АНИМИРОВАННЫЕ ОБЪЕКТЫ */
+        #player { width: 25px; height: 25px; background: var(--p); position: absolute; border-radius: 6px; z-index: 10; border: 2px solid #fff; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+        .target { position: absolute; padding: 10px; background: #fff; border-radius: 12px; font-size: 11px; font-weight: bold; border: 2px solid #eee; box-shadow: 0 4px 0 #ddd; transition: 0.2s; }
+        
+        .mole { width: 80px; height: 80px; background: var(--dark); color: #fff; position: absolute; bottom: -100px; transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s; border-radius: 50% 50% 10px 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; text-align: center; cursor: pointer; padding: 5px; box-sizing: border-box; }
+        .mole.up { bottom: 20px; }
+
+        .cloud { position: absolute; background: #fff; padding: 12px 20px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; font-weight: bold; animation: float 6s linear infinite; }
+        @keyframes float { from { right: -150px; } to { right: 115%; } }
+
+        .box { position: absolute; top: -60px; background: #fff; border: 3px solid var(--p); padding: 10px; border-radius: 10px; font-weight: bold; animation: drop 4s linear forwards; cursor: pointer; }
+        @keyframes drop { to { top: 110%; } }
 
         /* УПРАВЛЕНИЕ */
-        #joy-base { width: 100px; height: 100px; background: rgba(0,0,0,0.08); border-radius: 50%; position: relative; margin: 5px auto; display: none; border: 2px solid #ddd; }
-        #joy-stick { width: 40px; height: 40px; background: var(--p); border-radius: 50%; position: absolute; left: 30px; top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        #joy-base { width: 90px; height: 90px; background: rgba(0,0,0,0.05); border-radius: 50%; position: relative; margin: 0 auto; display: none; border: 2px solid #ddd; touch-action: none; }
+        #joy-stick { width: 40px; height: 40px; background: var(--p); border-radius: 50%; position: absolute; left: 25px; top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
         /* РЕДАКТОР */
-        .card-editor { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 8px solid var(--ai); position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .inp { width: 100%; margin: 5px 0; padding: 10px; border-radius: 10px; border: 1px solid #eee; box-sizing: border-box; }
+        .card-editor { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 8px solid var(--ai); position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .inp { width: 100%; margin: 5px 0; padding: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 14px; }
+        .radio-box { width: 22px; height: 22px; cursor: pointer; }
 
-        /* КОНФЕТТИ */
-        .confetti { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 9999; animation: fall 3s ease-out forwards; }
-        @keyframes fall { 
-            0% { transform: translateY(0) rotate(0); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-
-        #finish-screen { display: none; position: absolute; inset: 0; background: rgba(255,255,255,0.95); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        /* ФИНАЛ */
+        .confetti { position: fixed; width: 8px; height: 8px; pointer-events: none; z-index: 999; animation: fall 3s linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+        #finish-screen { display: none; position: absolute; inset: 0; background: #fff; z-index: 2000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">GrammaLab Kids 7</div>
+    <div class="logo">GrammaLab Pro 🐸</div>
     <div class="score" id="score-val">0 ⭐</div>
 </header>
 
@@ -64,35 +68,35 @@
         <button class="btn btn-manual" onclick="openEditor('anagram')">🔠 Буквы</button>
         <button class="btn btn-manual" onclick="openEditor('pairs')">👥 Пары</button>
     </div>
-    <button class="btn btn-p" onclick="importCode()" style="margin-top:20px;">📥 ЗАГРУЗИТЬ ПО КОДУ</button>
+    <button class="btn btn-p" onclick="importCode()" style="margin-top:20px;">📥 ЗАГРУЗИТЬ ИГРУ</button>
 </div>
 
 <div id="sc-edit" class="screen">
-    <div style="display: flex; gap: 8px;">
+    <div style="display: flex; gap: 8px; position: sticky; top: 0; background: var(--bg); z-index: 10; padding-bottom: 10px;">
         <button class="btn btn-ai" style="flex: 1" onclick="showAi()">🤖 ИИ БАЗА (1-13)</button>
         <button class="btn btn-manual" style="flex: 1" onclick="addBlank()">➕ ВРУЧНУЮ</button>
     </div>
-    <div id="editor-list" style="margin-top:15px;"></div>
+    <div id="editor-list"></div>
     <button class="btn btn-p" onclick="startPlay()">ИГРАТЬ ▶️</button>
-    <button class="btn btn-manual" onclick="exportCode()">📤 КОД ПЕРЕДАЧИ</button>
+    <button class="btn btn-manual" onclick="exportCode()">📤 ПОЛУЧИТЬ КОД</button>
 </div>
 
 <div id="sc-game" class="screen" style="overflow: hidden;">
     <div id="finish-screen">
-        <h1 style="color:var(--s)">ПОБЕДА!</h1>
+        <h1 style="color:var(--s); font-size: 3rem;">🎉</h1>
         <p id="final-res" style="font-size: 1.5rem; font-weight: 800;"></p>
         <button class="btn btn-p" style="width: 200px" onclick="location.reload()">В МЕНЮ</button>
     </div>
-    <div id="game-info" style="text-align:center; font-weight:bold; margin-bottom:10px; color:var(--ai);"></div>
+    <div id="game-info" style="text-align:center; font-weight:bold; margin-bottom:10px; color:var(--dark);"></div>
     <div id="stage"></div>
     <div id="joy-base"><div id="joy-stick"></div></div>
     <div id="game-controls"></div>
 </div>
 
 <div id="ai-overlay" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 1000; padding: 20px; overflow-y: auto;">
-    <h2 style="text-align:center">Темы ИИ:</h2>
+    <h3 style="text-align:center">Выбери тему (1-13):</h3>
     <div id="ai-options"></div>
-    <button class="btn btn-p" onclick="document.getElementById('ai-overlay').style.display='none'">НАЗАД</button>
+    <button class="btn btn-p" onclick="document.getElementById('ai-overlay').style.display='none'">ЗАКРЫТЬ</button>
 </div>
 
 <script>
@@ -101,18 +105,18 @@
 
     const AI_DB = {
         1: {t: "Существительное", q: "Род слова 'Тюль':", a: ["Мужской", "Женский", "Средний"], c: 0},
-        2: {t: "Обращение", q: "Нужна запятая: 'Мама ( ) я иду!'", a: ["Да", "Нет", "Иногда"], c: 0},
+        2: {t: "Обращение", q: "Нужна запятая: 'Мама ( ) я дома!'", a: ["Да", "Нет", "Иногда"], c: 0},
         3: {t: "Типы речи", q: "Если отвечаем на 'Почему?':", a: ["Рассуждение", "Описание", "Повествование"], c: 0},
-        4: {t: "Лексика", q: "Антоним к слову 'Смелый':", a: ["Трусливый", "Сильный", "Храбрый"], c: 0},
-        5: {t: "Союзы", q: "Перед 'А' всегда запятая?", a: ["Да", "Нет", "Только в конце"], c: 0},
-        6: {t: "Обобщающие слова", q: "Овощи: лук, морковь. 'Овощи' это:", a: ["Обобщающее", "Подлежащее", "Глагол"], c: 0},
-        7: {t: "Прямая речь", q: "Что ставим после автора перед речью?", a: ["Двоеточие", "Точка", "Запятая"], c: 0},
-        8: {t: "Подлежащее", q: "Вопрос 'Кто? Что?':", a: ["Подлежащее", "Сказуемое", "Обстоятельство"], c: 0},
-        9: {t: "Сказуемое", q: "Вопрос 'Что делает?':", a: ["Сказуемое", "Подлежащее", "Дополнение"], c: 0},
-        10: {t: "Обстоятельство", q: "Вопрос 'Как? Где?':", a: ["Обстоятельство", "Определение", "Дополнение"], c: 0},
-        11: {t: "Тире", q: "Где нужно тире?", a: ["Дуб - дерево", "Он поет", "Я ученик"], c: 0},
-        12: {t: "Местоимение", q: "Личное местоимение 1 лица:", a: ["Я", "Ты", "Они"], c: 0},
-        13: {t: "Глагол", q: "Спряжение глагола 'Брить':", a: ["Исключение (1)", "2 спр", "3 спр"], c: 0}
+        4: {t: "Лексика", q: "Антоним к слову 'Свет':", a: ["Тьма", "Лампа", "Яркость"], c: 0},
+        5: {t: "Союзы", q: "Перед 'А' запятая...", a: ["Всегда", "Никогда", "Только в конце"], c: 0},
+        6: {t: "Обобщающие", q: "Фрукты: это...", a: ["Яблоко, груша", "Бег, прыжки", "Синий, алый"], c: 0},
+        7: {t: "Прямая речь", q: "Прямая речь пишется в...", a: ["Кавычках", "Скобках", "Лупе"], c: 0},
+        8: {t: "Подлежащее", q: "Отвечает на:", a: ["Кто? Что?", "Где? Куда?", "Как?"], c: 0},
+        9: {t: "Сказуемое", q: "Означает:", a: ["Действие", "Предмет", "Признак"], c: 0},
+        10: {t: "Обстоятельство", q: "Вопрос 'Где?':", a: ["Обстоятельство", "Определение", "Дополнение"], c: 0},
+        11: {t: "Тире", q: "Где нужно тире?", a: ["Дуб - дерево", "Он поет", "Я учусь"], c: 0},
+        12: {t: "Местоимение", q: "Укажи личное:", a: ["Мы", "Красивый", "Один"], c: 0},
+        13: {t: "Глагол", q: "Глагол 'Брить' это:", a: ["1 спряжение", "2 спряжение", "Исключение"], c: 0}
     };
 
     function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
@@ -130,19 +134,25 @@
 
     function addCard(data) {
         const div = document.createElement('div'); div.className = 'card-editor';
-        div.innerHTML = `<input type="text" class="inp inp-q" value="${data.q}">
-            ${data.a.map((v, i) => `<div style="display:flex;gap:10px;"><input type="radio" name="r${Math.random()}" class="inp-c" ${i===data.c?'checked':''}>
-            <input type="text" class="inp inp-a" value="${v}"></div>`).join('')}
-            <button onclick="this.parentElement.remove()" style="color:red;border:none;background:none">✖ Удалить</button>`;
-        div.dataset.topic = data.t; document.getElementById('editor-list').appendChild(div);
+        const groupName = 'g' + Math.random().toString(36).substr(2, 9);
+        div.innerHTML = `<input type="text" class="inp inp-q" placeholder="Вопрос" value="${data.q}">
+            ${data.a.map((v, i) => `<div style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
+                <input type="radio" name="${groupName}" class="inp-c radio-box" ${i===data.c?'checked':''}>
+                <input type="text" class="inp inp-a" value="${v}" placeholder="Ответ ${i+1}">
+            </div>`).join('')}
+            <button onclick="this.parentElement.remove()" style="color:var(--r); border:none; background:none; font-weight:bold; cursor:pointer;">✖ Удалить карточку</button>`;
+        document.getElementById('editor-list').appendChild(div);
+        div.scrollIntoView({behavior: "smooth"});
     }
-    function addBlank() { addCard({t:"Тема", q:"", a:["","",""], c:0}); }
+    function addBlank() { addCard({q:"", a:["","",""], c:0}); }
 
     function startPlay() {
         questions = [];
         document.querySelectorAll('.card-editor').forEach(card => {
-            let opts = []; card.querySelectorAll('.inp-a').forEach((inp, i) => opts.push({ text: inp.value, ok: card.querySelectorAll('.inp-c')[i].checked }));
-            if(card.querySelector('.inp-q').value) questions.push({ topic: card.dataset.topic, q: card.querySelector('.inp-q').value, opts });
+            let opts = []; card.querySelectorAll('.inp-a').forEach((inp, i) => {
+                opts.push({ text: inp.value, ok: card.querySelectorAll('.inp-c')[i].checked });
+            });
+            if(card.querySelector('.inp-q').value) questions.push({ q: card.querySelector('.inp-q').value, opts });
         });
         if(questions.length) { currentStep = 0; score = 0; showScreen('sc-game'); renderGame(); }
     }
@@ -154,10 +164,10 @@
 
         if(mode === 'maze') {
             document.getElementById('joy-base').style.display = 'block';
-            st.innerHTML = '<div id="player"></div>'; px = 20; py = 20; movePlayer(0,0);
+            st.innerHTML = '<div id="player"></div>'; px = 20; py = 20; updateP();
             it.opts.forEach((o, i) => {
                 let t = document.createElement('div'); t.className = 'target';
-                t.style.bottom = (10 + i*40) + "px"; t.style.right = "10px";
+                t.style.top = (40 + i*80) + "px"; t.style.right = "20px";
                 t.innerText = o.text; t.dataset.ok = o.ok; st.appendChild(t);
             });
             startJoystick();
@@ -165,10 +175,22 @@
             it.opts.forEach((o, i) => {
                 let m = document.createElement('div'); m.className = 'mole'; m.style.left = (5 + i*32) + "%"; m.innerText = o.text;
                 m.onclick = () => check(o.ok, m); st.appendChild(m);
-                setInterval(() => m.classList.toggle('up'), 1500 + i*400);
+                setInterval(() => m.classList.toggle('up'), 1200 + i*400);
+            });
+        } else if(mode === 'plane') {
+            it.opts.forEach((o, i) => {
+                let c = document.createElement('div'); c.className = 'cloud'; c.style.top = (40 + i*80) + "px";
+                c.innerText = o.text; c.onclick = () => check(o.ok, c); st.appendChild(c);
+            });
+        } else if(mode === 'fall') {
+            it.opts.forEach((o, i) => {
+                setTimeout(() => {
+                    let b = document.createElement('div'); b.className = 'box'; b.style.left = (10 + i*30) + "%";
+                    b.innerText = o.text; b.onclick = () => check(o.ok, b); st.appendChild(b);
+                }, i * 1500);
             });
         } else {
-            st.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px;font-size:1.1rem">${it.q}</div>`;
+            st.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px;font-size:1.2rem">${it.q}</div>`;
             it.opts.forEach(o => {
                 let b = document.createElement('button'); b.className = 'btn btn-p'; b.innerText = o.text;
                 b.onclick = () => check(o.ok, b); ctrl.appendChild(b);
@@ -178,7 +200,8 @@
 
     function check(ok, el) {
         if(isChecking) return; isChecking = true;
-        if(ok) { score += 10; el.style.background = "var(--s)"; } else { el.style.background = "var(--r)"; }
+        if(ok) { score += 10; el.style.background = "var(--s)"; el.style.color = "#fff"; } 
+        else { el.style.background = "var(--r)"; el.style.color = "#fff"; }
         document.getElementById('score-val').innerText = score + " ⭐";
         setTimeout(() => {
             currentStep++; if(currentStep < questions.length) renderGame();
@@ -187,41 +210,58 @@
     }
 
     function finishGame() {
-        document.getElementById('final-res').innerText = score + " ⭐";
+        document.getElementById('final-res').innerText = "Ты собрал " + score + " ⭐";
         document.getElementById('finish-screen').style.display = 'flex';
-        for(let i=0; i<50; i++) spawnConfetti();
+        for(let i=0; i<60; i++) {
+            const c = document.createElement('div'); c.className = 'confetti';
+            c.style.left = Math.random()*100+'vw'; c.style.background = ['#3498db','#2ecc71','#e74c3c','#f1c40f'][Math.floor(Math.random()*4)];
+            document.body.appendChild(c); setTimeout(()=>c.remove(), 3000);
+        }
     }
 
-    function spawnConfetti() {
-        const c = document.createElement('div'); c.className = 'confetti';
-        c.style.left = Math.random()*100+'vw'; c.style.background = ['#3498db','#2ecc71','#e74c3c','#f1c40f'][Math.floor(Math.random()*4)];
-        document.body.appendChild(c); setTimeout(()=>c.remove(), 3000);
+    function updateP() { 
+        const p = document.getElementById('player'); 
+        if(p) { p.style.left = px + "px"; p.style.top = py + "px"; } 
     }
 
     function movePlayer(dx, dy) {
-        const p = document.getElementById('player'); if(!p) return;
-        px = Math.max(0, Math.min(px + dx, 270)); py = Math.max(0, Math.min(py + dy, 290));
-        p.style.left = px + "px"; p.style.top = py + "px";
+        px = Math.max(0, Math.min(px + dx, 260)); py = Math.max(0, Math.min(py + dy, 280));
+        updateP();
         document.querySelectorAll('.target').forEach(t => {
-            let r1 = p.getBoundingClientRect(), r2 = t.getBoundingClientRect();
+            let r1 = document.getElementById('player').getBoundingClientRect();
+            let r2 = t.getBoundingClientRect();
             if(!(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom)) check(t.dataset.ok === "true", t);
         });
     }
 
     function startJoystick() {
         const base = document.getElementById('joy-base'), stick = document.getElementById('joy-stick');
-        base.ontouchmove = (e) => {
-            let t = e.touches[0], r = base.getBoundingClientRect();
-            let x = t.clientX - r.left - 50, y = t.clientY - r.top - 50;
-            let d = Math.min(Math.sqrt(x*x + y*y), 40), a = Math.atan2(y, x);
-            stick.style.left = (30 + Math.cos(a)*d) + "px"; stick.style.top = (30 + Math.sin(a)*d) + "px";
-            movePlayer(Math.cos(a)*6, Math.sin(a)*6); e.preventDefault();
+        const handle = (e) => {
+            let touch = e.touches[0], r = base.getBoundingClientRect();
+            let x = touch.clientX - r.left - 45, y = touch.clientY - r.top - 45;
+            let d = Math.min(Math.sqrt(x*x + y*y), 35), a = Math.atan2(y, x);
+            stick.style.left = (25 + Math.cos(a)*d) + "px"; stick.style.top = (25 + Math.sin(a)*d) + "px";
+            movePlayer(Math.cos(a)*7, Math.sin(a)*7); e.preventDefault();
         };
-        base.ontouchend = () => { stick.style.left="30px"; stick.style.top="30px"; };
+        base.ontouchmove = handle;
+        base.ontouchend = () => { stick.style.left="25px"; stick.style.top="25px"; };
     }
 
-    function exportCode() { prompt("Твой код:", btoa(unescape(encodeURIComponent(JSON.stringify({m:mode, q:questions}))))); }
-    function importCode() { let c = prompt("Код:"); if(c) { let d = JSON.parse(decodeURIComponent(escape(atob(c)))); mode=d.m; questions=d.q; startPlay(); } }
+    function exportCode() {
+        // Безопасный экспорт в UTF-8
+        let str = JSON.stringify({m:mode, q:questions});
+        let code = btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+        prompt("Твой код игры (скопируй полностью):", code);
+    }
+    function importCode() {
+        let c = prompt("Вставь код игры:");
+        if(c) {
+            try {
+                let str = decodeURIComponent(atob(c).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+                let d = JSON.parse(str); mode = d.m; questions = d.q; startPlay();
+            } catch(e) { alert("Ошибка: Неверный код!"); }
+        }
+    }
 </script>
 </body>
 </html>
