@@ -3,143 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GrammaLab Pro 5-6 Grade</title>
+    <title>GrammaLab Final 13</title>
     <style>
-        :root { --p: #3498db; --bg: #f0f2f5; --ai: #9b59b6; --s: #2ecc71; --r: #e74c3c; --dark: #34495e; }
-        body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); overflow: hidden; touch-action: none; }
-        
-        header { background: #fff; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--p); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .score { background: var(--dark); color: #fff; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
-        .btn-home { background: var(--p); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
-
+        :root { --p: #3498db; --bg: #f5f6fa; --ai: #9b59b6; --s: #2ecc71; --r: #e74c3c; --dark: #2c3e50; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; touch-action: none; }
+        header { background: #fff; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--p); box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 100; position: relative; }
+        .btn-home { background: var(--p); color: #fff; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .score { background: var(--dark); color: #fff; padding: 5px 12px; border-radius: 15px; font-weight: bold; }
         .screen { display: none; padding: 15px; height: calc(100vh - 65px); box-sizing: border-box; overflow-y: auto; }
-        .active { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .btn { padding: 16px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; width: 100%; margin: 6px 0; box-shadow: 0 4px 0 rgba(0,0,0,0.1); transition: 0.1s; }
+        .active { display: block; }
+        .btn { padding: 15px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; width: 100%; margin: 5px 0; box-shadow: 0 4px 0 rgba(0,0,0,0.1); transition: 0.1s; }
         .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         .btn-p { background: var(--p); color: #fff; }
         .btn-ai { background: var(--ai); color: #fff; }
-        .btn-white { background: #fff; color: #333; border: 1px solid #ccc; }
-
-        #stage { height: 350px; position: relative; overflow: hidden; background: #fff; border-radius: 24px; border: 4px solid var(--dark); margin-bottom: 10px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 10px; }
-        
-        /* АНИМАЦИИ ИГР */
-        .obj-anim { animation: pulse 2s infinite ease-in-out; }
+        .btn-w { background: #fff; border: 1px solid #ccc; color: #555; }
+        #stage { height: 350px; position: relative; overflow: hidden; background: #fff; border-radius: 20px; border: 4px solid var(--dark); margin-bottom: 10px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 8px; }
+        #player { width: 28px; height: 28px; background: var(--p); position: absolute; border-radius: 8px; z-index: 10; border: 2px solid #fff; }
+        .target { position: absolute; padding: 10px; background: #fff; border-radius: 10px; font-size: 11px; font-weight: bold; border: 2px solid #eee; box-shadow: 0 3px 0 #ddd; animation: pulse 2s infinite; white-space: nowrap; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-
-        .cloud { position: absolute; background: #fff; padding: 12px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-weight: bold; animation: fly 8s linear infinite, wave 2s infinite ease-in-out; }
-        @keyframes fly { from { left: 110%; } to { left: -150px; } }
-        @keyframes wave { 0%, 100% { margin-top: 0; } 50% { margin-top: 20px; } }
-
-        .box { position: absolute; top: -100px; background: #fff; border: 3px solid var(--p); padding: 10px; border-radius: 12px; font-weight: bold; animation: fall 5s linear forwards, spin 4s infinite linear; }
-        @keyframes fall { to { top: 110%; } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(10deg); } }
-
-        .mole { width: 80px; height: 80px; background: #7d5a50; color: #fff; position: absolute; bottom: -90px; border-radius: 40px 40px 10px 10px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 5px; box-sizing: border-box; }
+        .mole { width: 80px; height: 80px; background: #7d5a50; color: #fff; position: absolute; bottom: -90px; border-radius: 40px 40px 10px 10px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 10px; transition: 0.4s; }
         .mole.up { bottom: 20px; }
-
-        .letter { width: 50px; height: 50px; background: var(--ai); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.2s; }
-        .letter:active { transform: translateY(-10px); }
-
-        #joy-base { width: 100px; height: 100px; background: rgba(0,0,0,0.05); border-radius: 50%; position: relative; margin: 0 auto; display: none; border: 2px solid #ddd; touch-action: none; }
-        #joy-stick { width: 44px; height: 44px; background: var(--p); border-radius: 50%; position: absolute; left: 28px; top: 28px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-
-        .card-editor { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 8px solid var(--ai); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .inp { width: 100%; margin: 6px 0; padding: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 15px; }
+        .cloud { position: absolute; background: #fff; padding: 12px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-weight: bold; animation: fly 8s linear infinite; }
+        @keyframes fly { from { left: 110%; } to { left: -150px; } }
+        .box { position: absolute; top: -100px; background: #fff; border: 3px solid var(--p); padding: 10px; border-radius: 12px; font-weight: bold; animation: fall 5s linear forwards; }
+        @keyframes fall { to { top: 110%; } }
+        .letter { width: 45px; height: 45px; background: var(--ai); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; border-radius: 10px; cursor: pointer; }
+        .letter.off { opacity: 0.2; pointer-events: none; }
+        .pair { width: 80px; height: 80px; background: var(--dark); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: transparent; cursor: pointer; text-align: center; }
+        .pair.open { background: #fff; color: var(--dark); border: 2px solid var(--dark); }
+        #joy-base { width: 90px; height: 90px; background: rgba(0,0,0,0.05); border-radius: 50%; position: relative; margin: 0 auto; display: none; border: 2px solid #ddd; touch-action: none; }
+        #joy-stick { width: 40px; height: 40px; background: var(--p); border-radius: 50%; position: absolute; left: 25px; top: 25px; }
+        .card-editor { background: #fff; padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 6px solid var(--ai); position: relative; }
+        .inp { width: 100%; margin: 4px 0; padding: 8px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
 <header>
-    <button class="btn-home" onclick="location.reload()">🏠 Меню</button>
-    <div style="font-weight: 900; color: var(--p); font-size: 1.2rem;">GrammaLab</div>
-    <div class="score" id="score-val">0 ⭐</div>
+    <button class="btn-home" onclick="location.reload()">🏠 МЕНЮ</button>
+    <div class="score" id="sc-val">0 ⭐</div>
 </header>
 
 <div id="sc-menu" class="screen active">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <button class="btn btn-white" onclick="openEdit('maze')">👾 Лабиринт</button>
-        <button class="btn btn-white" onclick="openEdit('mole')">🔨 Кроты</button>
-        <button class="btn btn-white" onclick="openEdit('plane')">✈️ Самолет</button>
-        <button class="btn btn-white" onclick="openEdit('fall')">📦 Падение</button>
-        <button class="btn btn-white" onclick="openEdit('quiz')">📝 Тест</button>
-        <button class="btn btn-white" onclick="openEdit('anagram')">🔠 Буквы</button>
-        <button class="btn btn-white" onclick="openEdit('pairs')">👥 Пары</button>
+        <button class="btn btn-w" onclick="setMode('maze')">👾 Лабиринт</button>
+        <button class="btn btn-w" onclick="setMode('mole')">🔨 Кроты</button>
+        <button class="btn btn-w" onclick="setMode('plane')">✈️ Самолет</button>
+        <button class="btn btn-w" onclick="setMode('fall')">📦 Падение</button>
+        <button class="btn btn-w" onclick="setMode('quiz')">📝 Тест</button>
+        <button class="btn btn-w" onclick="setMode('anagram')">🔠 Буквы</button>
+        <button class="btn btn-w" onclick="setMode('pairs')">👥 Пары</button>
     </div>
-    <button class="btn btn-p" onclick="importCode()" style="margin-top:20px;">📥 ЗАГРУЗИТЬ ИГРУ</button>
+    <button class="btn btn-p" onclick="importGame()" style="margin-top:20px;">📥 ВСТАВИТЬ КОД</button>
 </div>
 
 <div id="sc-edit" class="screen">
-    <div style="display: flex; gap: 10px; margin-bottom: 15px; position: sticky; top: 0; background: var(--bg); padding: 5px; z-index: 10;">
-        <button class="btn btn-ai" style="flex: 2" onclick="showAi()">🤖 ИИ (5-6 класс)</button>
-        <button class="btn btn-white" style="flex: 1" onclick="addCard({q:'', a:['','',''], c:0})">➕</button>
+    <div style="display: flex; gap: 8px; margin-bottom: 10px; position: sticky; top: 0; background: var(--bg); z-index: 10;">
+        <button class="btn btn-ai" style="flex: 2" onclick="showAi()">🤖 ИИ 13 ТЕМ</button>
+        <button class="btn btn-w" style="flex: 1" onclick="addQ({q:'', a:['','',''], c:0})">➕</button>
     </div>
     <div id="editor-list"></div>
-    <button class="btn btn-p" onclick="startPlay()">ИГРАТЬ ▶️</button>
-    <button class="btn btn-white" onclick="exportCode()">📤 ПОЛУЧИТЬ КОД</button>
+    <button class="btn btn-p" onclick="play()">ИГРАТЬ ▶️</button>
+    <button class="btn btn-w" onclick="exportGame()">📤 КОПИРОВАТЬ КОД</button>
 </div>
 
 <div id="sc-game" class="screen" style="overflow: hidden;">
-    <div id="info" style="text-align:center; font-weight:bold; font-size: 1.1rem; margin-bottom:10px; color: var(--dark);"></div>
+    <div id="info" style="text-align:center; font-weight:bold; margin-bottom:10px; font-size: 1.1rem;"></div>
     <div id="stage"></div>
     <div id="joy-base"><div id="joy-stick"></div></div>
     <div id="game-controls"></div>
 </div>
 
-<div id="ai-overlay" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 1000; padding: 20px; overflow-y: auto;">
-    <h2 style="text-align:center">Темы 5-6 класса:</h2>
-    <div id="ai-list"></div>
-    <button class="btn btn-p" onclick="document.getElementById('ai-overlay').style.display='none'">ЗАКРЫТЬ</button>
-</div>
-
 <script>
-    let mode = '', questions = [], current = 0, score = 0, isBusy = false;
-    let px = 20, py = 20;
+    let mode = '', questions = [], current = 0, score = 0, busy = false, px = 20, py = 20;
 
-    const AI_5_6 = {
-        "Корни": {q: "Выбери слово с чередованием (ЛАГ/ЛОЖ):", a: ["Положить", "Ложка", "Ложный"], c: 0},
-        "Спряжения": {q: "Глагол-исключение 2 спряжения:", a: ["Брить", "Слышать", "Писать"], c: 1},
-        "Существительные": {q: "Слово 3-го склонения:", a: ["Конь", "Мышь", "Окно"], c: 1},
-        "Приставки": {q: "Где пишется ПРЕ- (в значении ПЕРЕ-):", a: ["Преградить", "Пришить", "Присесть"], c: 0},
-        "Члены предл.": {q: "Второстепенный член (вопрос ЧЕЙ?):", a: ["Обстоятельство", "Дополнение", "Определение"], c: 2},
-        "Фонетика": {q: "В каком слове букв больше, чем звуков:", a: ["Маяк", "Ель", "Пень"], c: 2}
+    const AI = {
+        1: {t:"Существительное", q:"Слово 3-го склонения:", a:["Нож", "Дочь", "Окно"], c:1},
+        2: {t:"Обращение", q:"Где нужно поставить запятую?", a:["Он спит.", "Спи сынок.", "Сын спит."], c:1},
+        3: {t:"Типы речи", q:"Текст о причинах событий:", a:["Повествование", "Рассуждение", "Описание"], c:1},
+        4: {t:"Лексика", q:"Синоним к слову 'Холодный':", a:["Студеный", "Жаркий", "Синий"], c:0},
+        5: {t:"Союзы", q:"Перед каким союзом запятая ВСЕГДА?", a:["И", "Но", "Да"], c:1},
+        6: {t:"Обобщающие", q:"Мебель: шкаф, стол. Где обобщающее?", a:["Мебель", "Шкаф", "Стол"], c:0},
+        7: {t:"Прямая речь", q:"Выберите верную схему:", a:["А: 'П.'", "А - 'П.'", "А 'П'."], c:0},
+        8: {t:"Подлежащее", q:"На какой вопрос отвечает?", a:["Что делать?", "Кто? Что?", "Какой?"], c:1},
+        9: {t:"Сказуемое", q:"На какой вопрос отвечает?", a:["Кто?", "Что делает?", "Где?"], c:1},
+        10: {t:"Обстоятельство", q:"Вопросы Где? Куда? Когда?:", a:["Обстоятельство", "Дополнение", "Определение"], c:0},
+        11: {t:"Тире", q:"Я - ученик. Почему тире?", a:["Сущ+Сущ в Им.п.", "Подлежащее+Глагол", "Просто так"], c:0},
+        12: {t:"Местоимение", q:"Личное местоимение 2 лица:", a:["Я", "Ты", "Он"], c:1},
+        13: {t:"Глагол", q:"Инфинитив глагола 'Пишу':", a:["Писать", "Писал", "Буду писать"], c:0}
     };
 
-    function showAi() {
-        const list = document.getElementById('ai-list'); list.innerHTML = '';
-        Object.keys(AI_5_6).forEach(k => {
-            let b = document.createElement('button'); b.className = 'btn btn-white'; b.innerText = k;
-            b.onclick = () => { addCard(AI_5_6[k]); document.getElementById('ai-overlay').style.display='none'; };
-            list.appendChild(b);
-        });
-        document.getElementById('ai-overlay').style.display = 'block';
-    }
-
-    function openEdit(m) { mode = m; document.getElementById('sc-menu').classList.remove('active'); document.getElementById('sc-edit').classList.add('active'); }
-
-    function addCard(d) {
+    function setMode(m) { mode = m; document.getElementById('sc-menu').classList.remove('active'); document.getElementById('sc-edit').classList.add('active'); }
+    function addQ(d) {
         const div = document.createElement('div'); div.className = 'card-editor';
-        const rId = 'r'+Math.random();
-        div.innerHTML = `<input class="inp q-in" value="${d.q}" placeholder="Вопрос">
-            ${d.a.map((v, i) => `<div style="display:flex;gap:8px;align-items:center"><input type="radio" name="${rId}" class="c-in" ${i===d.c?'checked':''}>
-            <input class="inp a-in" value="${v}"></div>`).join('')}
-            <button onclick="this.parentElement.remove()" style="color:red;border:none;background:none;font-size:12px;margin-top:5px">УДАЛИТЬ КАРТОЧКУ</button>`;
+        const rid = 'r' + Math.random();
+        div.innerHTML = `<input class="inp q-v" value="${d.q}" placeholder="Вопрос">
+            ${d.a.map((v, i) => `<div style="display:flex;gap:5px;align-items:center"><input type="radio" name="${rid}" class="c-v" ${i===d.c?'checked':''}>
+            <input class="inp a-v" value="${v}"></div>`).join('')}
+            <button onclick="this.parentElement.remove()" style="color:red;border:none;background:none">УДАЛИТЬ</button>`;
         document.getElementById('editor-list').appendChild(div);
-        div.scrollIntoView({behavior:"smooth"});
     }
+    function showAi() { Object.keys(AI).forEach(k => addQ(AI[k])); }
 
-    function startPlay() {
+    function play() {
         questions = [];
-        document.querySelectorAll('.card-editor').forEach(card => {
-            let opts = []; card.querySelectorAll('.a-in').forEach((inp, i) => opts.push({ t: inp.value, ok: card.querySelectorAll('.c-in')[i].checked }));
-            questions.push({ q: card.querySelector('.q-in').value, opts });
+        document.querySelectorAll('.card-editor').forEach(c => {
+            let opts = []; c.querySelectorAll('.a-v').forEach((inp, i) => opts.push({ t: inp.value, ok: c.querySelectorAll('.c-v')[i].checked }));
+            questions.push({ q: c.querySelector('.q-v').value.toUpperCase(), opts });
         });
-        if(questions.length) { current = 0; score = 0; document.getElementById('sc-edit').classList.remove('active'); document.getElementById('sc-game').classList.add('active'); render(); }
+        if(questions.length) { current = 0; score = 0; document.getElementById('sc-edit').classList.remove('active'); document.getElementById('sc-game').classList.add('active'); draw(); }
     }
 
-    function render() {
-        isBusy = false; const it = questions[current]; const st = document.getElementById('stage'); const ctrl = document.getElementById('game-controls');
+    function draw() {
+        busy = false; const it = questions[current]; const st = document.getElementById('stage'); const ctrl = document.getElementById('game-controls');
         st.innerHTML = ''; ctrl.innerHTML = ''; document.getElementById('joy-base').style.display = 'none';
         document.getElementById('info').innerText = it.q;
 
@@ -147,87 +123,94 @@
             document.getElementById('joy-base').style.display = 'block';
             st.innerHTML = '<div id="player"></div>'; px = 20; py = 20; updateP();
             it.opts.forEach((o, i) => {
-                let t = document.createElement('div'); t.className = 'target obj-anim'; t.style.top = (40 + i*90)+"px"; t.style.right="20px";
+                let t = document.createElement('div'); t.className = 'target'; t.style.top = (40 + i*90) + "px"; t.style.right = "20px";
                 t.innerText = o.t; t.dataset.ok = o.ok; st.appendChild(t);
             });
             initJoy();
-        } else if(mode === 'mole') {
-            it.opts.forEach((o, i) => {
-                let m = document.createElement('div'); m.className = 'mole'; m.style.left = (10 + i*30)+"%"; m.innerText = o.t;
-                m.onclick = () => check(o.ok, m); st.appendChild(m);
-                setInterval(() => m.classList.toggle('up'), 1500 + i*300);
-            });
-        } else if(mode === 'plane') {
-            it.opts.forEach((o, i) => {
-                let c = document.createElement('div'); c.className = 'cloud'; c.style.top = (30 + i*100)+"px";
-                c.innerText = o.t; c.onclick = () => check(o.ok, c); st.appendChild(c);
-            });
         } else if(mode === 'anagram') {
-            let cur = ""; let word = it.q.toUpperCase();
+            let cur = ""; let word = it.q;
             word.split('').sort(()=>Math.random()-0.5).forEach(l => {
                 let d = document.createElement('div'); d.className = 'letter'; d.innerText = l;
-                d.onclick = () => { if(d.style.opacity === '0.3') return; cur += l; d.style.opacity = '0.3'; document.getElementById('info').innerText = cur;
+                d.onclick = () => { if(d.classList.contains('off')) return; cur += l; d.classList.add('off'); document.getElementById('info').innerText = cur;
                 if(cur.length === word.length) check(cur === word, d); };
                 st.appendChild(d);
             });
+        } else if(mode === 'mole') {
+            it.opts.forEach((o, i) => {
+                let m = document.createElement('div'); m.className = 'mole'; m.innerText = o.t;
+                m.onclick = () => check(o.ok, m); st.appendChild(m);
+                setInterval(() => m.classList.toggle('up'), 1500 + i*400);
+            });
+        } else if(mode === 'pairs') {
+            let items = []; it.opts.forEach(o => { items.push(o.t); items.push(o.t); });
+            items.sort(()=>Math.random()-0.5); let op = [];
+            items.forEach(txt => {
+                let c = document.createElement('div'); c.className = 'pair'; c.innerText = txt;
+                c.onclick = () => { if(op.length < 2 && !c.classList.contains('open')) { c.classList.add('open'); op.push(c);
+                if(op.length === 2) { if(op[0].innerText === op[1].innerText) { score+=5; op=[]; if(document.querySelectorAll('.pair:not(.open)').length === 0) check(true, c); }
+                else { setTimeout(()=>{ op.forEach(x=>x.classList.remove('open')); op=[]; }, 600); } } } };
+                st.appendChild(c);
+            });
+        } else if(mode === 'plane') {
+            it.opts.forEach((o, i) => {
+                let c = document.createElement('div'); c.className = 'cloud'; c.style.top = (30 + i*90) + "px";
+                c.innerText = o.t; c.onclick = () => check(o.ok, c); st.appendChild(c);
+            });
         } else if(mode === 'fall') {
             it.opts.forEach((o, i) => {
-                setTimeout(() => {
-                    let b = document.createElement('div'); b.className = 'box'; b.style.left = (10+i*30)+"%";
-                    b.innerText = o.t; b.onclick = () => check(o.ok, b); st.appendChild(b);
-                }, i * 1500);
+                setTimeout(() => { let b = document.createElement('div'); b.className = 'box'; b.style.left = (10+i*30)+"%";
+                b.innerText = o.t; b.onclick = () => check(o.ok, b); st.appendChild(b); }, i*1500);
             });
         } else {
             it.opts.forEach(o => {
-                let b = document.createElement('button'); b.className = 'btn btn-p obj-anim'; b.innerText = o.t;
+                let b = document.createElement('button'); b.className = 'btn btn-p'; b.innerText = o.t;
                 b.onclick = () => check(o.ok, b); ctrl.appendChild(b);
             });
         }
     }
 
     function check(ok, el) {
-        if(isBusy) return; isBusy = true;
-        if(ok) { score += 10; el.style.background = "var(--s)"; } else { el.style.background = "var(--r)"; }
-        document.getElementById('score-val').innerText = score + " ⭐";
-        setTimeout(() => { current++; if(current < questions.length) render(); else { alert("ФИНАЛ! Твой результат: " + score); location.reload(); } }, 800);
+        if(busy) return; busy = true;
+        el.style.background = ok ? "var(--s)" : "var(--r)";
+        if(ok) score += 10; document.getElementById('sc-val').innerText = score + " ⭐";
+        setTimeout(() => { current++; if(current < questions.length) draw(); else { alert("Конец! Очки: " + score); location.reload(); } }, 800);
     }
 
     function updateP() { let p = document.getElementById('player'); if(p) { p.style.left = px+"px"; p.style.top = py+"px"; } }
-    
     function initJoy() {
         const base = document.getElementById('joy-base'), stick = document.getElementById('joy-stick');
-        const handle = (e) => {
+        base.ontouchmove = (e) => {
             let t = e.touches[0], r = base.getBoundingClientRect();
-            let x = t.clientX - r.left - 50, y = t.clientY - r.top - 50;
-            let d = Math.min(Math.sqrt(x*x + y*y), 40), a = Math.atan2(y, x);
-            stick.style.left = (28 + Math.cos(a)*d) + "px"; stick.style.top = (28 + Math.sin(a)*d) + "px";
-            px = Math.max(0, Math.min(px + Math.cos(a)*8, 280)); py = Math.max(0, Math.min(py + Math.sin(a)*8, 300)); updateP();
+            let x = t.clientX - r.left - 45, y = t.clientY - r.top - 45;
+            let d = Math.min(Math.sqrt(x*x + y*y), 35), a = Math.atan2(y, x);
+            stick.style.left = (25 + Math.cos(a)*d) + "px"; stick.style.top = (25 + Math.sin(a)*d) + "px";
+            px = Math.max(0, Math.min(px + Math.cos(a)*8, 270)); py = Math.max(0, Math.min(py + Math.sin(a)*8, 290)); updateP();
             document.querySelectorAll('.target').forEach(tar => {
                 let r1 = document.getElementById('player').getBoundingClientRect(), r2 = tar.getBoundingClientRect();
                 if(!(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom)) check(tar.dataset.ok === "true", tar);
             });
-            e.preventDefault();
         };
-        base.ontouchmove = handle;
-        base.ontouchend = () => { stick.style.left="28px"; stick.style.top="28px"; };
+        base.ontouchend = () => { stick.style.left="25px"; stick.style.top="25px"; };
     }
 
-    // НОВАЯ СИСТЕМА ПЕРЕДАЧИ КОДА
-    function exportCode() {
-        const data = JSON.stringify({m: mode, q: questions});
-        const code = btoa(encodeURIComponent(data));
-        prompt("Твой надежный код игры (скопируй полностью):", code);
+    // НАДЕЖНЫЙ ЭКСПОРТ/ИМПОРТ
+    function exportGame() {
+        const str = JSON.stringify({m:mode, q:questions});
+        const bytes = new TextEncoder().encode(str);
+        const code = btoa(String.fromCharCode(...bytes));
+        prompt("Твой надежный код:", code);
     }
 
-    function importCode() {
-        const code = prompt("Вставь код игры сюда:");
+    function importGame() {
+        const code = prompt("Вставь код:");
         if(code) {
             try {
-                const decoded = decodeURIComponent(atob(code));
-                const data = JSON.parse(decoded);
-                mode = data.m; questions = data.q;
-                startPlay();
-            } catch(e) { alert("Ошибка: Код поврежден или неверный!"); }
+                const bin = atob(code);
+                const bytes = new Uint8Array(bin.length);
+                for(let i=0; i<bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                const d = JSON.parse(new TextDecoder().decode(bytes));
+                mode = d.m; questions = d.q; play();
+            } catch(e) { alert("Ошибка кода!"); }
         }
     }
 </script>
